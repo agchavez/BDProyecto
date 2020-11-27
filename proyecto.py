@@ -1,5 +1,5 @@
 """
-@autor agchavez@unah.hn 
+@autor agchavez@unah.hn @david.jacome@unah.hn 
 @Date 2020/11/26
 @Version 0.1
 """
@@ -39,6 +39,7 @@ class PyList:
     def __iter__(self):
         for c in self.items:
             yield c
+
 class GoToCommand:
     # Here the constructor is defined with default values for width and color.
     # This means we can construct a GoToCommand objects as GoToCommand(10,20),
@@ -83,6 +84,7 @@ class PenUpCommand:
         pass
     def draw(self,turtle):
         turtle.penup()
+        
 class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -177,11 +179,11 @@ class DrawingApplication(tkinter.Frame):
             theTurtle.penup()
             theTurtle.goto(0,0)
             theTurtle.pendown()
-            theTurtle.pencolor("#")
-            theTurtle.fillcolor("#")
+            theTurtle.pencolor("#000000")
+            theTurtle.fillcolor("#000000")
             cmd = PenUpCommand()
             self.graphicsCommands.append(cmd)
-            cmd = GoToCommand(0,0,0,"#")
+            cmd = GoToCommand(0,0,1,"#000000")
             self.graphicsCommands.append(cmd)
             cmd = PenDownCommand()
             self.graphicsCommands.append(cmd)
@@ -201,6 +203,7 @@ class DrawingApplication(tkinter.Frame):
             file.write("<?xml version=\"0.1\" encoding=\"UTF-8\" standalone=\"no\" ?>\n")
             file.write("<GraphicsCommands>\n")
             for cmd in self.graphicsCommands:
+                print(cmd)
                 file.write(" "+str(cmd)+"\n")
 
             file.write("</GraphicsCommands>\n")
@@ -227,7 +230,7 @@ class DrawingApplication(tkinter.Frame):
 
         theTurtle.shape("circle")
         screen = theTurtle.getscreen()
-        screen.tracer()
+        screen.tracer(0)
 
         sideBar = tkinter.Frame(self,padx=5,pady=5)
         sideBar.pack(side=tkinter.RIGHT, fill=tkinter.BOTH)
@@ -238,13 +241,13 @@ class DrawingApplication(tkinter.Frame):
         widthSize = tkinter.StringVar()
         widthEntry = tkinter.Entry(sideBar,textvariable=widthSize)
         widthEntry.pack()
-        widthSize.set(str())
+        widthSize.set(str(1))
 
         radiusLabel = tkinter.Label(sideBar,text="Radius")
         radiusLabel.pack()
         radiusSize = tkinter.StringVar()
         radiusEntry = tkinter.Entry(sideBar,textvariable=radiusSize)
-        radiusSize.set(str())
+        radiusSize.set(str(10))
         radiusEntry.pack()
 
         def circleHandler():
@@ -339,6 +342,7 @@ class DrawingApplication(tkinter.Frame):
             # When a mouse click occurs, get the widthSize entry value and set the width of the
             # pen to the widthSize value. The float(widthSize.get()) is needed because
             # the width is a float, but the entry widget stores it as a string.
+            print("--->",widthSize.get())
             cmd = GoToCommand(x,y,float(widthSize.get()),penColor.get())
             cmd.draw(theTurtle)
             self.graphicsCommands.append(cmd)
@@ -371,8 +375,8 @@ class DrawingApplication(tkinter.Frame):
                 screen.update()
                 screen.listen()
 
-            screen.onkeypress(undoHandler, "u")
-            screen.listen()
+        screen.onkeypress(undoHandler, "u")
+        screen.listen()
 def main():
     root = tkinter.Tk()
     drawingApp = DrawingApplication(root)
