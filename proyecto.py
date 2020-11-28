@@ -8,14 +8,19 @@
 import tkinter
 import turtle
 import xml
-from xml.dom import minidom
+import xml.dom.minidom
+import xml.etree.ElementTree as ET
 import tkinter.colorchooser
 import tkinter.filedialog
+import json
+
 class PenDownCommand:
     def __init__(self):
         pass
     def draw(self,turtle):
         turtle.pendown()
+    def __str__(self):
+        return '<Command>PenDown</Command>'
 class PyList:
     def __init__(self):
         self.items = []
@@ -24,7 +29,7 @@ class PyList:
         self.items = self.items + [item]
 
     def removeLast(self):
-        self.items.remove()
+        self.items.clear()
 
     # if we want to iterate over this sequence, we define the special method
     # called __iter__(self). Without this we’ll get "builtins.TypeError:
@@ -54,6 +59,8 @@ class GoToCommand:
         turtle.width(self.width)
         turtle.pencolor(self.color)
         turtle.goto(self.x,self.y)
+    def __str__(self):
+        return '<Command x="%s" y="%s" width="%s" color="%s">GoTo</Command>' % (self.x,self.y,self.width,self.color)
     
 class CircleCommand:
     def __init__(self,radius, width=1,color="black"):
@@ -65,6 +72,13 @@ class CircleCommand:
         turtle.width(self.width)
         turtle.pencolor(self.color)
         turtle.circle(self.radius)
+        
+    def __str__(self):
+        #return {"comando":"Circle",
+        # "radius": self.radius, 
+        # "width": self.width, 
+        # "color": self.color}
+        return '<Command radius="%s" width="%s" color="%s">Circle</Command>' % (self.radius, self.width, self.color)
     
 class BeginFillCommand:
     def __init__(self,color):
@@ -73,17 +87,29 @@ class BeginFillCommand:
     def draw(self,turtle):
         turtle.fillcolor(self.color)
         turtle.begin_fill()
+    def __str__(self):
+        return '<Command color="%s">BeginFill</Command>' % (self.color)
     
 class EndFillCommand:
     def __init__(self):
         pass
     def draw(self,turtle):
         turtle.end_fill()
+    def  __str__(self):
+        return {
+            "command":"EndFill"
+        }
+
 class PenUpCommand:
     def __init__(self):
         pass
     def draw(self,turtle):
         turtle.penup()
+    def __str__(self):
+        
+        return {
+            "command": "PenUp"
+        }
         
 class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
@@ -111,11 +137,10 @@ class DrawingApplication(tkinter.Frame):
         fileMenu.add_command(label="New",command=newWindow)
 
 # The parse function adds the contents of an XML file to the sequence.
-        def parse(filename):    
+        def parse(filename): 
+            #json
             xmldoc = xml.dom.minidom.parse(filename)
-
             graphicsCommandsElement = xmldoc.getElementsByTagName("GraphicsCommands")[0]
-
             graphicsCommands = graphicsCommandsElement.getElementsByTagName("Command")
 
             for commandElement in graphicsCommands:
@@ -160,7 +185,7 @@ class DrawingApplication(tkinter.Frame):
 
             # This re-initializes the sequence for the new picture.
             self.graphicsCommands = PyList()
-
+            print(filename)
             # calling parse will read the graphics commands from the file.
             parse(filename)
 
@@ -203,7 +228,6 @@ class DrawingApplication(tkinter.Frame):
             file.write("<?xml version=\"0.1\" encoding=\"UTF-8\" standalone=\"no\" ?>\n")
             file.write("<GraphicsCommands>\n")
             for cmd in self.graphicsCommands:
-                print(cmd)
                 file.write(" "+str(cmd)+"\n")
 
             file.write("</GraphicsCommands>\n")
@@ -253,6 +277,7 @@ class DrawingApplication(tkinter.Frame):
         def circleHandler():
             cmd = CircleCommand(float(radiusSize.get()), float(widthSize.get()), penColor.get())
             cmd.draw(theTurtle)
+            print(cmd.color)
             self.graphicsCommands.append(cmd)
             screen.update()
             screen.listen()
@@ -323,7 +348,7 @@ class DrawingApplication(tkinter.Frame):
             cmd = PenUpCommand()
             cmd.draw(theTurtle)
             penLabel.configure(text="Pen Is Up")
-            self.graphicsCommands.append(cmd)
+            self.graphicsCommands.append(cmd),
 
         penUpButton = tkinter.Button(sideBar, text = "Pen Up", command=penUpHandler)
         penUpButton.pack(fill=tkinter.BOTH)
@@ -339,10 +364,10 @@ class DrawingApplication(tkinter.Frame):
 
         # Here is another event handler. This one handles mouse clicks on the screen.
         def clickHandler(x,y):
+            
             # When a mouse click occurs, get the widthSize entry value and set the width of the
             # pen to the widthSize value. The float(widthSize.get()) is needed because
             # the width is a float, but the entry widget stores it as a string.
-            print("--->",widthSize.get())
             cmd = GoToCommand(x,y,float(widthSize.get()),penColor.get())
             cmd.draw(theTurtle)
             self.graphicsCommands.append(cmd)
