@@ -27,6 +27,16 @@ class ConfigUser(tkinter.Frame):
         bar = tkinter.Menu(self.master)
         fileMenu = tkinter.Menu(bar,tearoff=0)
 
+        def newWindow():
+            theTurtle.clear()
+            theTurtle.penup()
+            theTurtle.goto(0,0)
+            theTurtle.pendown()
+
+        def saveFile():
+            print('guardo')
+            filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
+
         bar.add_cascade(label="Menu",menu=fileMenu)
         fileMenu.add_command(label="Exit",command=self.master.quit)
         self.master.config(menu=bar)
