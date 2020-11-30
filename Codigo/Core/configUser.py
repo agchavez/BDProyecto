@@ -34,6 +34,7 @@ class ConfigUser(tkinter.Frame):
             theTurtle.pendown()
 
         def saveFile():
+            print('guardo')
             filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
 
         bar.add_cascade(label="Menu",menu=fileMenu)
