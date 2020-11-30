@@ -21,7 +21,7 @@ Label(ventana, text = "  Usuario   = ", fg=colorLetra, bg=colorFondo).place(x=25
 Label(ventana, text = "Contraseña =", fg=colorLetra, bg=colorFondo).place(x=250, y=120)
 entry = Entry(ventana, textvariable=usuario)
 entry.place(x=325, y=80)
-entry = Entry(ventana, textvariable=password)
+entry = Entry(ventana,show="*", textvariable=password)
 entry.place(x=325, y=120)
 Button(ventana, text="Ingresar", bg="#003333", fg=colorLetra).place(x=340, y=165)
 ventana.geometry(posicion)
