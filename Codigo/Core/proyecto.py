@@ -1,10 +1,10 @@
 """
-@autor agchavez@unah.hn @david.jacome@unah.hn 
-@Date 2020/11/26
-@Version 0.1
+    @autor agchavez@unah.hn @david.jacome@unah.hn @Abner.Jimenez.@unah.hn
+    @Date 2020/11/26
+    @Version 1.0
 """
 
-
+from actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
 import tkinter
 import turtle
 import xml
@@ -14,101 +14,7 @@ import tkinter.colorchooser
 import tkinter.filedialog
 import json
 
-temp = []
-class PenDownCommand:
-    def __init__(self):
-        pass
-    def draw(self,turtle):
-        turtle.pendown()
-    def __str__(self):
-        return '"PenDown"'
-class PyList:
-    def __init__(self):
-        self.items = []
-
-    def append(self,item):
-        self.items = self.items + [item]
-
-    def removeLast(self):
-        self.items.clear()
-
-    # if we want to iterate over this sequence, we define the special method
-    # called __iter__(self). Without this we’ll get "builtins.TypeError:
-    # ’PyList’ object is not iterable" if we try to write
-    # for cmd in seq:
-    # where seq is one of these sequences. The yield below will yield an
-    # element of the sequence and will suspend the execution of the for
-    # loop in the method below until the next element is needed. The ability
-    # to yield each element of the sequence as needed is called "lazy" evaluation
-    # and is very powerful. It means that we only need to provide access to as
-    # many of elements of the sequence as are necessary and no more.
-    def __iter__(self):
-        for c in self.items:
-            yield c
-
-class GoToCommand:
-    # Here the constructor is defined with default values for width and color.
-    # This means we can construct a GoToCommand objects as GoToCommand(10,20),
-    # or GoToCommand(10,20,5), or GoToCommand(10,20,5,"yellow").
-    def __init__(self,x,y,width=1,color="black"):
-        self.x = x
-        self.y = y
-        self.color = color
-        self.width = width
-        self.json = json
-    
-    def draw(self,turtle):
-        turtle.width(self.width)
-        turtle.pencolor(self.color)
-        turtle.goto(self.x,self.y)
-    def __str__(self):
-        return '{"-x": "%s", "-y": "%s","-width": "%s","-color": "%s","#text": "GoTo"}\n' % (self.x,self.y,self.width,self.color)
-    
-class CircleCommand:
-    def __init__(self,radius, width=1,color="black"):
-        self.radius = radius
-        self.width = width
-        self.color = color
-    
-    def draw(self,turtle):
-        turtle.width(self.width)
-        turtle.pencolor(self.color)
-        turtle.circle(self.radius)
-        
-    def __str__(self):
-        #return {"comando":"Circle",
-        # "radius": self.radius, 
-        # "width": self.width, 
-        # "color": self.color}
-        return '{"-radius": "%s","-width": "%s","-color": "%s","#text": "Circle"}\n' % (self.radius, self.width, self.color)
-    
-class BeginFillCommand:
-    def __init__(self,color):
-        self.color = color
-    
-    def draw(self,turtle):
-        turtle.fillcolor(self.color)
-        turtle.begin_fill()
-    def __str__(self):
-        return '{"-color": "%s","#text": "BeginFill"}' % (self.color)
-    
-class EndFillCommand:
-    def __init__(self):
-        pass
-    def draw(self,turtle):
-        turtle.end_fill()
-    def  __str__(self):
-        return '"EndFill"'
-
-class PenUpCommand:
-    def __init__(self):
-        pass
-    def draw(self,turtle):
-        turtle.penup()
-    def __str__(self):
-        
-        return '"PenUp"'
-        
+temp = []   
 class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -136,28 +42,28 @@ class DrawingApplication(tkinter.Frame):
 
         def parse(filename): 
             #json
-            xmldoc = xml.dom.minidom.parse(filename)
-            graphicsCommandsElement = xmldoc.getElementsByTagName("GraphicsCommands")[0]
-            graphicsCommands = graphicsCommandsElement.getElementsByTagName("Command")
+            with open(filename) as file:
+                data = json.load(file)
+            graphicsCommands = data['GraphicsCommands']
 
-            for commandElement in graphicsCommands:
-                command = commandElement.firstChild.data.strip()
-                attr = commandElement.attributes
+            for commandElement in graphicsCommands['Commands']:
+                #print(type(commandElement['command']))
+                command = commandElement['command']
                 if command == "GoTo":
-                    x = float(attr["x"].value)
-                    y = float(attr["y"].value)
-                    width = float(attr["width"].value)
-                    color = attr["color"].value.strip()
+                    x = float(commandElement['x'])
+                    y = float(commandElement['y'])
+                    width = float(commandElement['width'])
+                    color = commandElement['color'].strip()
                     cmd = GoToCommand(x,y,width,color)
 
                 elif command == "Circle":
-                    radius = float(attr["radius"].value)
-                    width = float(attr["width"].value)
-                    color = attr["color"].value.strip()
+                    radius = float(commandElement['radius'])
+                    width = float(commandElement['width'])
+                    color = commandElement['color'].strip()
                     cmd = CircleCommand(radius,width,color)
 
-                elif command == "BeginFill":
-                    color = attr["color"].value.strip()
+                elif command == "BeginF":
+                    color = commandElement['color'].strip()
                     cmd = BeginFillCommand(color)
 
                 elif command == "EndFill":
@@ -182,8 +88,6 @@ class DrawingApplication(tkinter.Frame):
             # This re-initializes the sequence for the new picture.
             self.graphicsCommands = PyList()
             # calling parse will read the graphics commands from the file.
-
-
             parse(filename)
 
             for cmd in self.graphicsCommands:
@@ -219,19 +123,15 @@ class DrawingApplication(tkinter.Frame):
 
         fileMenu.add_command(label="Load Into...",command=addToFile)
 
-        # The write function writes an XML file to the given filename
         def write(filename):
-            json = ""
+            temp = {
+                    "GraphicsCommands": {
+                        "Commands": [] }}           
             for cmd in self.graphicsCommands:
-                temp.append(str(cmd))
-            json += '{"GraphicsCommands": \n {"Command": \n ['
-            json += "\n"+','.join(temp)
-            json += ']\n}\n'
-            json += "}"
-
-            file = open(filename, "w")
-            file.write(json)
-            file.close()
+                value = str(cmd)
+                temp['GraphicsCommands']['Commands'].append(json.loads(value))
+            with open(filename, 'w') as file:
+                json.dump(temp, file)
 
         def saveFile():
             filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
@@ -272,6 +172,7 @@ class DrawingApplication(tkinter.Frame):
         def circleHandler():
             cmd = CircleCommand(float(radiusSize.get()), float(widthSize.get()), penColor.get())
             cmd.draw(theTurtle)
+            #print(cmd.color)
             self.graphicsCommands.append(cmd)
             screen.update()
             screen.listen()
@@ -356,7 +257,6 @@ class DrawingApplication(tkinter.Frame):
             screen.update()
             screen.listen()
 
-        # Here is how we tie the clickHandler to mouse clicks.
         screen.onclick(clickHandler)
 
         def dragHandler(x,y):
