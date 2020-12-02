@@ -18,7 +18,7 @@ INSERT INTO Color(var_fillColor, var_penColor, id_user) VALUES
     ("#000000","#c82a54",1),
     ("#ffffff","#ef280f",2),
     ("#109dfa","#23bac4",3),
-    ("#02ac66","#ff689d",1)
+    ("#02ac66","#ff689d",4)
 ;
 
 INSERT INTO Paint(var_name,jso_data,id_user) VALUES 
