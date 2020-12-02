@@ -4,7 +4,7 @@
     @Version 1.0
 """
 
-from actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
+#from actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
 import tkinter
 import turtle
 import xml
@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 import tkinter.colorchooser
 import tkinter.filedialog
 import json
-
+import re
 temp = []
       
 class ConfigUser(tkinter.Frame):
@@ -41,31 +41,32 @@ class ConfigUser(tkinter.Frame):
         fileMenu.add_command(label="Exit",command=self.master.quit)
         self.master.config(menu=bar)
 
-        sideBar = tkinter.Frame(self,padx=60,pady=60)
+        sideBar = tkinter.Frame(self,padx=300,pady=300)
         sideBar.pack(side=tkinter.BOTTOM, fill=tkinter.BOTH)
 
-        pointLabel = tkinter.Label(sideBar,text="Nombre")
-        pointLabel.pack()
-        widthSize = tkinter.StringVar()
-        widthEntry = tkinter.Entry(sideBar,textvariable=widthSize)
+        nameLabel = tkinter.Label(sideBar,text="Nombre")
+        nameLabel.pack()
+        name = tkinter.StringVar()
+        widthEntry = tkinter.Entry(sideBar,textvariable=name)
         widthEntry.pack()
 
-        radiusLabel = tkinter.Label(sideBar,text="Contraseña")
-        radiusLabel.pack()
-        radiusSize = tkinter.StringVar()
-        radiusEntry = tkinter.Entry(sideBar,textvariable=radiusSize)
+        passwordLabel = tkinter.Label(sideBar,text="Contraseña")
+        passwordLabel.pack()
+        password = tkinter.StringVar()
+        radiusEntry = tkinter.Entry(sideBar,textvariable=password)
         radiusEntry.pack()
 
-        radiusLabel = tkinter.Label(sideBar,text="Pent-Color")
-        radiusLabel.pack()
-        radiusSize = tkinter.StringVar()
-        radiusEntry = tkinter.Entry(sideBar,textvariable=radiusSize)
+        #Validar con expresion regular que solo permita hexadecimal
+        pentColorLabel = tkinter.Label(sideBar,text="Pent-Color")
+        pentColorLabel.pack()
+        pentColor = tkinter.StringVar()
+        radiusEntry = tkinter.Entry(sideBar,textvariable = pentColor)
         radiusEntry.pack()
 
-        radiusLabel = tkinter.Label(sideBar,text="Fill-color")
-        radiusLabel.pack()
-        radiusSize = tkinter.StringVar()
-        radiusEntry = tkinter.Entry(sideBar,textvariable=radiusSize)
+        fillColorLabel = tkinter.Label(sideBar,text="Fill-color")
+        fillColorLabel.pack()
+        fillColor = tkinter.StringVar()
+        radiusEntry = tkinter.Entry(sideBar,textvariable=fillColor)
         radiusEntry.pack()
 
         #widthSize.set(str(1))
@@ -73,16 +74,23 @@ class ConfigUser(tkinter.Frame):
         #radiusSize.set(str(10))
         #radiusSize.set(str(10))
 
+        def getUserName():
+            return name.get()
+
+        def getPassword():
+            return password.get()
+
+        def getFillColor():
+            return fillColor.get()
+
+        def getPentColor():
+            return pentColor.get()        
+
         def save():
-            print(radiusSize.get())
+            pass
 
         circleButton = tkinter.Button(sideBar, text = "Save", command=save)
         circleButton.pack(fill=tkinter.BOTH)
-
-        def clickHandler(x,y):      
-            cmd = GoToCommand(x,y,float(widthSize.get()),penColor.get())
-            cmd.draw(theTurtle)
-            self.graphicsCommands.append(cmd)
 
 def main():
     root = tkinter.Tk()

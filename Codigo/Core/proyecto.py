@@ -1,5 +1,6 @@
 """
     @autor agchavez@unah.hn @david.jacome@unah.hn @Abner.Jimenez.@unah.hn
+    @autor tomado con referencia del libro de texto
     @Date 2020/11/26
     @Version 1.0
 """
@@ -80,9 +81,7 @@ class DrawingApplication(tkinter.Frame):
                 self.graphicsCommands.append(cmd)
 
         def loadFile():
-
             filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")
-
             newWindow()
 
             # This re-initializes the sequence for the new picture.
@@ -95,7 +94,6 @@ class DrawingApplication(tkinter.Frame):
 
             # This line is necessary to update the window after the picture is drawn.
             screen.update()
-
 
         fileMenu.add_command(label="Load...",command=loadFile)
 
