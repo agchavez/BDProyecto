@@ -6,6 +6,7 @@
 """
 
 from actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
+from configUser import *
 import tkinter
 import turtle
 import xml
@@ -19,13 +20,11 @@ temp = []
 class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
-        self.pack()
-        self.buildWindow()
+        #self.buildWindow()
         self.graphicsCommands = PyList()
+        
     def buildWindow(self):
-
-        self.master.title("Draw")
-
+        self.master.title("Draw")   
         bar = tkinter.Menu(self.master)
         fileMenu = tkinter.Menu(bar,tearoff=0)
 
@@ -48,7 +47,6 @@ class DrawingApplication(tkinter.Frame):
             graphicsCommands = data['GraphicsCommands']
 
             for commandElement in graphicsCommands['Commands']:
-                #print(type(commandElement['command']))
                 command = commandElement['command']
                 if command == "GoTo":
                     x = float(commandElement['x'])
@@ -83,19 +81,14 @@ class DrawingApplication(tkinter.Frame):
         def loadFile():
             filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")
             newWindow()
-
-            # This re-initializes the sequence for the new picture.
             self.graphicsCommands = PyList()
-            # calling parse will read the graphics commands from the file.
             parse(filename)
 
             for cmd in self.graphicsCommands:
                 cmd.draw(theTurtle)
-
-            # This line is necessary to update the window after the picture is drawn.
             screen.update()
 
-        fileMenu.add_command(label="Load...",command=loadFile)
+        fileMenu.add_command(label="Load",command=loadFile)
 
         def addToFile():
             filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")
@@ -118,9 +111,13 @@ class DrawingApplication(tkinter.Frame):
                 cmd.draw(theTurtle)
 
             screen.update()
+        """
+                #si es un administrador llamamos agregamos a opcion de Configure (falta)
+                fileMenu.add_command(label="Configure",command=configure)
 
-        fileMenu.add_command(label="Load Into...",command=addToFile)
-
+                def configure(self):
+                    config = configUser()
+        """
         def write(filename):
             temp = {
                     "GraphicsCommands": {
@@ -135,7 +132,7 @@ class DrawingApplication(tkinter.Frame):
             filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
             write(filename)
 
-        fileMenu.add_command(label="Save As...",command=saveFile)
+        fileMenu.add_command(label="Save As",command=saveFile)
         fileMenu.add_command(label="Exit",command=self.master.quit)
         bar.add_cascade(label="File",menu=fileMenu)
         self.master.config(menu=bar)
@@ -170,7 +167,6 @@ class DrawingApplication(tkinter.Frame):
         def circleHandler():
             cmd = CircleCommand(float(radiusSize.get()), float(widthSize.get()), penColor.get())
             cmd.draw(theTurtle)
-            #print(cmd.color)
             self.graphicsCommands.append(cmd)
             screen.update()
             screen.listen()
@@ -280,12 +276,17 @@ class DrawingApplication(tkinter.Frame):
 
         screen.onkeypress(undoHandler, "u")
         screen.listen()
-def main():
-    root = tkinter.Tk()
-    drawingApp = DrawingApplication(root)
+        self.pack()
+    
 
-    drawingApp.mainloop()
-    print("Program Execution Completed.")
 
-if __name__ == "__main__":
-    main()
+class drawWindow:
+    def __init__(self):
+        pass
+
+    def run(self):
+        root = tkinter.Tk()
+        drawingApp = DrawingApplication(root)
+        drawingApp.mainloop()
+        print("Program Execution Completed.")
+
