@@ -96,6 +96,7 @@ class DrawingApplication(tkinter.Frame):
             screen.update()
 
         fileMenu.add_command(label="Load...",command=loadFile)
+        fileMenu.add_command(label="Dowload...",command=loadFile)
 
         def addToFile():
             filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")

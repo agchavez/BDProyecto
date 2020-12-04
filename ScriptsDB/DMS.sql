@@ -1,17 +1,17 @@
-USE Proyecto;
+USE Proyecto2;
 
-INSERT INTO User(var_userName,var_password, boo_type) VALUES 
-    ("Gabriel","LanaRhoades", 0),
-    ("Abner","EvaLovia", 1),
-    ("David","MiaKalifa", 1),
-    ("Daniela ","1234", 1)
+INSERT INTO User(var_userName,var_password,var_fillColor, var_penColor, boo_type) VALUES 
+    ("Gabriel","LanaRhoades",'00000','00120', 0),
+    ("Abner","EvaLovia",'00000','00120', 1),
+    ("David","MiaKalifa",'00000','00120', 1),
+    ("Daniela ","1234",'00000','00120', 1)
 ;
 
 INSERT INTO Binnacle(tex_action,id_user) VALUES 
-    ("Circle",1),
-    ("Cuadrado",2),
-    ("Edito",3),
-    ("Guardó ",1)
+    ("Login",1),
+    ("Login",2),
+    ("Login",3),
+    ("Login ",1)
 ;
 
 INSERT INTO Color(var_fillColor, var_penColor, id_user) VALUES 
