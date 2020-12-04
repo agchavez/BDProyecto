@@ -1,12 +1,12 @@
 """
-    @autor agchavez@unah.hn @david.jacome@unah.hn @Abner.Jimenez.@unah.hn
-    @autor tomado con referencia del libro de texto
+    @author agchavez@unah.hn @david.jacome@unah.hn @Abner.Jimenez.@unah.hn
+    @author tomado con referencia del libro de texto
     @Date 2020/11/26
     @Version 1.0
 """
 
-from actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
-from configUser import *
+from Core.actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
+from Core.configUser import *
 import tkinter
 import turtle
 import xml
@@ -20,7 +20,6 @@ temp = []
 class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
-        #self.buildWindow()
         self.graphicsCommands = PyList()
         
     def buildWindow(self):
@@ -41,7 +40,7 @@ class DrawingApplication(tkinter.Frame):
         fileMenu.add_command(label="New",command=newWindow)
 
         def parse(filename): 
-            #json
+            #cargar el json desde la base de datos y si no tiene dibujos no debe colapsar
             with open(filename) as file:
                 data = json.load(file)
             graphicsCommands = data['GraphicsCommands']
@@ -111,6 +110,7 @@ class DrawingApplication(tkinter.Frame):
                 cmd.draw(theTurtle)
 
             screen.update()
+
         """
                 #si es un administrador llamamos agregamos a opcion de Configure (falta)
                 fileMenu.add_command(label="Configure",command=configure)
@@ -118,6 +118,8 @@ class DrawingApplication(tkinter.Frame):
                 def configure(self):
                     config = configUser()
         """
+        
+
         def write(filename):
             temp = {
                     "GraphicsCommands": {
@@ -131,8 +133,14 @@ class DrawingApplication(tkinter.Frame):
         def saveFile():
             filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
             write(filename)
+        
+
+        def download():
+            #Guardar en la base de datos 2
+            pass
 
         fileMenu.add_command(label="Save As",command=saveFile)
+        fileMenu.add_command(label="Download",command=download)
         fileMenu.add_command(label="Exit",command=self.master.quit)
         bar.add_cascade(label="File",menu=fileMenu)
         self.master.config(menu=bar)
@@ -289,4 +297,3 @@ class drawWindow:
         drawingApp = DrawingApplication(root)
         drawingApp.mainloop()
         print("Program Execution Completed.")
-

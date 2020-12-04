@@ -19,7 +19,7 @@ class ConfigUser(tkinter.Frame):
         self.buildWindow()
         
     def buildWindow(self):
-        self.master.title("Guardar Diujo")
+        self.master.title("Guardar Dibujo")
         bar = tkinter.Menu(self.master)
         fileMenu = tkinter.Menu(bar,tearoff=0)
 
