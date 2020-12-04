@@ -7,6 +7,10 @@
 
 from Core.actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
 from Core.configUser import *
+from Core.loadPaint import *
+import tkinter as tk 
+from tkinter import ttk 
+
 import tkinter
 import turtle
 import xml
@@ -21,7 +25,8 @@ class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.graphicsCommands = PyList()
-        
+        #self.loadPaint = LoadDraw()
+
     def buildWindow(self):
         self.master.title("Draw")   
         bar = tkinter.Menu(self.master)
@@ -77,17 +82,12 @@ class DrawingApplication(tkinter.Frame):
 
                 self.graphicsCommands.append(cmd)
 
+        #cargar dibujo desde la base de datos solo si pertenecen a ese usuario de acuerdo al id
         def loadFile():
-            filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")
-            newWindow()
-            self.graphicsCommands = PyList()
-            parse(filename)
+            content=("lunes","martes","miércoles","jueves","viernes","sábado","domingo")
+            LoadDraw().run(content)
+            
 
-            for cmd in self.graphicsCommands:
-                cmd.draw(theTurtle)
-            screen.update()
-
-        fileMenu.add_command(label="Load",command=loadFile)
 
         def addToFile():
             filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")
@@ -111,13 +111,11 @@ class DrawingApplication(tkinter.Frame):
 
             screen.update()
 
-        """
-                #si es un administrador llamamos agregamos a opcion de Configure (falta)
-                fileMenu.add_command(label="Configure",command=configure)
+        def configure():
+            config = ConfigUser().buildWindow()
+        #si es un administrador llamamos agregamos a opcion de Configure (falta)
+        fileMenu.add_command(label="Configure", command=configure)
 
-                def configure(self):
-                    config = configUser()
-        """
         
 
         def write(filename):
@@ -136,7 +134,7 @@ class DrawingApplication(tkinter.Frame):
         
 
         def download():
-            #Guardar en la base de datos 2
+            #Guardar en la base de datos 2 y descargar archivo .blob 
             pass
 
         fileMenu.add_command(label="Save As",command=saveFile)
@@ -282,6 +280,7 @@ class DrawingApplication(tkinter.Frame):
                 screen.update()
                 screen.listen()
 
+        fileMenu.add_command(label="Load",command=loadFile)
         screen.onkeypress(undoHandler, "u")
         screen.listen()
         self.pack()

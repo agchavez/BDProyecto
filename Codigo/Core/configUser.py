@@ -16,30 +16,22 @@ import json
 import re
 temp = []
       
-class ConfigUser(tkinter.Frame):
+class ConfigUser(tkinter.Toplevel):
     def __init__(self, master=None):
         super().__init__(master)
-        self.pack()
-        self.buildWindow()
-        
+
     def buildWindow(self):
         self.master.title("Configure User")
-        bar = tkinter.Menu(self.master)
-        fileMenu = tkinter.Menu(bar,tearoff=0)
-
-        def newWindow():
-            theTurtle.clear()
-            theTurtle.penup()
-            theTurtle.goto(0,0)
-            theTurtle.pendown()
+        #bar = tkinter.Menu(self.master)
+        #menu = tkinter.Menu(bar,tearoff=0)
 
         def saveFile():
             print('guardo')
             filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
 
-        bar.add_cascade(label="Menu",menu=fileMenu)
-        fileMenu.add_command(label="Exit",command=self.master.quit)
-        self.master.config(menu=bar)
+        #bar.add_cascade(label="Menu",menu=menu)
+        #menu.add_command(label="Exit",command=self.master.quit)
+        #self.master.config(menu=bar)
 
         sideBar = tkinter.Frame(self,padx=300,pady=300)
         sideBar.pack(side=tkinter.BOTTOM, fill=tkinter.BOTH)
@@ -56,7 +48,6 @@ class ConfigUser(tkinter.Frame):
         radiusEntry = tkinter.Entry(sideBar,textvariable=password)
         radiusEntry.pack()
 
-        #Validar con expresion regular que solo permita hexadecimal
         pentColorLabel = tkinter.Label(sideBar,text="Pent-Color")
         pentColorLabel.pack()
         pentColor = tkinter.StringVar()
@@ -70,9 +61,6 @@ class ConfigUser(tkinter.Frame):
         radiusEntry.pack()
 
         #widthSize.set(str(1))
-        #radiusSize.set(str(10))
-        #radiusSize.set(str(10))
-        #radiusSize.set(str(10))
 
         def getUserName():
             return name.get()
@@ -81,13 +69,17 @@ class ConfigUser(tkinter.Frame):
             return password.get()
 
         def getFillColor():
-            return fillColor.get()
+            if (re.match("#[A-F0-F]{6}",fillColor.get())):
+                print(fillColor.get())
+                return fillColor.get()
 
         def getPentColor():
-            return pentColor.get()        
+            if (re.match("#[A-F0-F]{6}",pentColor.get())):
+                print(pentColor.get())
+                return pentColor.get()     
 
         def save():
-            pass
+            getFillColor()
 
         circleButton = tkinter.Button(sideBar, text = "Save", command=save)
         circleButton.pack(fill=tkinter.BOTH)
@@ -95,7 +87,6 @@ class ConfigUser(tkinter.Frame):
 def main():
     root = tkinter.Tk()
     drawingApp = ConfigUser(root)
-
     drawingApp.mainloop()
     print("Program Execution Completed.")
 
