@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS User(
 CREATE TABLE IF NOT EXISTS Paint(
     id INT AUTO_INCREMENT PRIMARY KEY,
     var_name VARCHAR(20) NOT NULL COMMENT "Nombre del dibujo",
-    jso_data JSON NOT NULL COMMENT "Información del dibujo ",
+    jso_data mediumblob NOT NULL COMMENT "Información del dibujo ",
     id_user INT NOT NULL COMMENT "llave foranéa de la tabla de usuario",
     FOREIGN KEY (id_user) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE
 )COMMENT "Descripción de la tabla paint con sus respectivos campos";
