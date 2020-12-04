@@ -1,6 +1,6 @@
 """
-    @author agchavez@unah.hn @david.jacome@unah.hn @Abner.Jimenez.@unah.hn
-    @author tomado con referencia del libro de texto
+    @autor agchavez@unah.hn @david.jacome@unah.hn @Abner.Jimenez.@unah.hn
+    @autor tomado con referencia del libro de texto
     @Date 2020/11/26
     @Version 1.0
 """
@@ -24,11 +24,15 @@ temp = []
 class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
+        self.pack()
+        self.buildWindow()
         self.graphicsCommands = PyList()
         #self.loadPaint = LoadDraw()
 
     def buildWindow(self):
-        self.master.title("Draw")   
+
+        self.master.title("Draw")
+
         bar = tkinter.Menu(self.master)
         fileMenu = tkinter.Menu(bar,tearoff=0)
 
@@ -45,12 +49,13 @@ class DrawingApplication(tkinter.Frame):
         fileMenu.add_command(label="New",command=newWindow)
 
         def parse(filename): 
-            #cargar el json desde la base de datos y si no tiene dibujos no debe colapsar
+            #json
             with open(filename) as file:
                 data = json.load(file)
             graphicsCommands = data['GraphicsCommands']
 
             for commandElement in graphicsCommands['Commands']:
+                #print(type(commandElement['command']))
                 command = commandElement['command']
                 if command == "GoTo":
                     x = float(commandElement['x'])
@@ -137,8 +142,7 @@ class DrawingApplication(tkinter.Frame):
             #Guardar en la base de datos 2 y descargar archivo .blob 
             pass
 
-        fileMenu.add_command(label="Save As",command=saveFile)
-        fileMenu.add_command(label="Download",command=download)
+        fileMenu.add_command(label="Save As...",command=saveFile)
         fileMenu.add_command(label="Exit",command=self.master.quit)
         bar.add_cascade(label="File",menu=fileMenu)
         self.master.config(menu=bar)
@@ -173,6 +177,7 @@ class DrawingApplication(tkinter.Frame):
         def circleHandler():
             cmd = CircleCommand(float(radiusSize.get()), float(widthSize.get()), penColor.get())
             cmd.draw(theTurtle)
+            #print(cmd.color)
             self.graphicsCommands.append(cmd)
             screen.update()
             screen.listen()
@@ -283,16 +288,12 @@ class DrawingApplication(tkinter.Frame):
         fileMenu.add_command(label="Load",command=loadFile)
         screen.onkeypress(undoHandler, "u")
         screen.listen()
-        self.pack()
-    
+def main():
+    root = tkinter.Tk()
+    drawingApp = DrawingApplication(root)
 
+    drawingApp.mainloop()
+    print("Program Execution Completed.")
 
-class drawWindow:
-    def __init__(self):
-        pass
-
-    def run(self):
-        root = tkinter.Tk()
-        drawingApp = DrawingApplication(root)
-        drawingApp.mainloop()
-        print("Program Execution Completed.")
+if __name__ == "__main__":
+    main()
