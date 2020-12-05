@@ -8,6 +8,7 @@
 from Core.actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
 from Core.configUser import *
 from Core.loadPaint import *
+from Core.User import *
 import tkinter as tk 
 from tkinter import ttk 
 
@@ -25,11 +26,10 @@ class DrawingApplication(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.pack()
-        self.buildWindow()
         self.graphicsCommands = PyList()
-        #self.loadPaint = LoadDraw()
+        #self.buildWindow()
 
-    def buildWindow(self):
+    def buildWindow(self, engine=None, user=None, password=None):
 
         self.master.title("Draw")
 
@@ -55,7 +55,6 @@ class DrawingApplication(tkinter.Frame):
             graphicsCommands = data['GraphicsCommands']
 
             for commandElement in graphicsCommands['Commands']:
-                #print(type(commandElement['command']))
                 command = commandElement['command']
                 if command == "GoTo":
                     x = float(commandElement['x'])
@@ -91,9 +90,7 @@ class DrawingApplication(tkinter.Frame):
         def loadFile():
             content=("lunes","martes","miércoles","jueves","viernes","sábado","domingo")
             LoadDraw().run(content)
-            
-
-
+        
         def addToFile():
             filename = tkinter.filedialog.askopenfilename(title="Select a Graphics File")
 
@@ -117,11 +114,10 @@ class DrawingApplication(tkinter.Frame):
             screen.update()
 
         def configure():
-            config = ConfigUser().buildWindow()
-        #si es un administrador llamamos agregamos a opcion de Configure (falta)
-        fileMenu.add_command(label="Configure", command=configure)
+            config = ConfigUser().buildWindow(engine)
 
-        
+        if (User(engine).searchAdmin(user, password)):   
+            fileMenu.add_command(label="Configure", command=configure)
 
         def write(filename):
             temp = {
@@ -177,7 +173,6 @@ class DrawingApplication(tkinter.Frame):
         def circleHandler():
             cmd = CircleCommand(float(radiusSize.get()), float(widthSize.get()), penColor.get())
             cmd.draw(theTurtle)
-            #print(cmd.color)
             self.graphicsCommands.append(cmd)
             screen.update()
             screen.listen()
@@ -288,12 +283,3 @@ class DrawingApplication(tkinter.Frame):
         fileMenu.add_command(label="Load",command=loadFile)
         screen.onkeypress(undoHandler, "u")
         screen.listen()
-def main():
-    root = tkinter.Tk()
-    drawingApp = DrawingApplication(root)
-
-    drawingApp.mainloop()
-    print("Program Execution Completed.")
-
-if __name__ == "__main__":
-    main()

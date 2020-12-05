@@ -5,6 +5,8 @@ from tkinter import Tk
 import tkinter as tk
 from tkinter import messagebox
 from Core.proyecto import *
+from Core.User import *
+from Core.MySQLEngine import *
 
 class LoginInit:
     def __init__(self):
@@ -36,8 +38,22 @@ class LoginInit:
         self.ventana.title("Login")
         self.ventana.mainloop()
 
+
+    def getUser(self):
+        return self.usuario.get()
+    
+    def getPassword(self):
+        return self.password.get()
     def send(self):
-        drawWindows = DrawingApplication().buildWindow()
+        config = ConnectionConfig("localhost","3306","admin","admin","Proyecto") 
+
+        engie = MySQLEngine(config)
+        temp = User(engie).searchUsers(self.getUser(),self.getPassword())
+
+        if (temp):  
+            drawWindows = DrawingApplication().buildWindow(engie, self.getUser(),self.getPassword())
+
         self.ventana.quit
+
 
 a = LoginInit()

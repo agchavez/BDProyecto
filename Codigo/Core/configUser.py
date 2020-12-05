@@ -12,26 +12,23 @@ import xml.dom.minidom
 import xml.etree.ElementTree as ET
 import tkinter.colorchooser
 import tkinter.filedialog
+from Core.configUser import *
+from Core.User import *
 import json
 import re
+
 temp = []
       
 class ConfigUser(tkinter.Toplevel):
     def __init__(self, master=None):
         super().__init__(master)
 
-    def buildWindow(self):
+    def buildWindow(self,engie=None):
         self.master.title("Configure User")
-        #bar = tkinter.Menu(self.master)
-        #menu = tkinter.Menu(bar,tearoff=0)
 
         def saveFile():
             print('guardo')
             filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
-
-        #bar.add_cascade(label="Menu",menu=menu)
-        #menu.add_command(label="Exit",command=self.master.quit)
-        #self.master.config(menu=bar)
 
         sideBar = tkinter.Frame(self,padx=300,pady=300)
         sideBar.pack(side=tkinter.BOTTOM, fill=tkinter.BOTH)
@@ -70,18 +67,31 @@ class ConfigUser(tkinter.Toplevel):
 
         def getFillColor():
             if (re.match("#[A-F0-F]{6}",fillColor.get())):
-                print(fillColor.get())
                 return fillColor.get()
 
-        def getPentColor():
+        def getPenColor():
             if (re.match("#[A-F0-F]{6}",pentColor.get())):
-                print(pentColor.get())
                 return pentColor.get()     
 
         def save():
-            getFillColor()
+            a = User(engie)
+            a.addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
 
-        circleButton = tkinter.Button(sideBar, text = "Save", command=save)
+        def delete(idUser = None):
+            a = User(engie)
+            id =  a.loginUser(getUserName(),getPassword())
+            a.dropUser(id)
+
+        def update():
+            a = User(engie)
+            id =  a.loginUser(getUserName(),getPassword())
+            a.updateUser(getUserName(),getPassword(),1,getPenColor(), getFillColor(),id)
+
+        circleButton = tkinter.Button(sideBar, text = "Save", command=save).place(x=180, y=100)
+        circleButton2 = tkinter.Button(sideBar, text = "Delete", command=delete)
+        circleButton2.place(x=180, y=180)
+        circleButton3 = tkinter.Button(sideBar, text = "Update", command=update).place(x=250, y=180)
+        
         circleButton.pack(fill=tkinter.BOTH)
 
 def main():
