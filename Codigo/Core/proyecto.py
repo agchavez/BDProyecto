@@ -42,10 +42,16 @@ class DrawingApplication(tkinter.Frame):
         self.idUser = id
         self.penColor = '#000000'
         self.fillColor = '#000000' 
-
         self.master.title("Draw")
         bar = tkinter.Menu(self.master)
         fileMenu = tkinter.Menu(bar,tearoff=0)
+
+        def ColorDefaul():
+            query = ColorConf(self.engine).searchColor(self.idUser)
+            self.penColor = query[0][1]
+            self.fillColor = query[0][0] 
+            
+        ColorDefaul()
 
         def newWindow():
             theTurtle.clear()
@@ -54,7 +60,11 @@ class DrawingApplication(tkinter.Frame):
             theTurtle.pendown()
             screen.update()
             screen.listen()
+            ColorDefaul()
+            penColor.set(self.penColor)
+            fillColor.set(self.fillColor)
             self.graphicsCommands = PyList()
+            
 
         fileMenu.add_command(label="New",command=newWindow)
 
@@ -214,7 +224,7 @@ class DrawingApplication(tkinter.Frame):
                 # Se almacena el valor del fillColor seleccionado en la variable Self.fillcolor
                 self.penColor = color[1]
                 # Se llama a la funcion addBinnacle de la clase Colorconf
-                ColorConf().addBinnacle(self.idUser,self.penColor, self.fillColor)
+                ColorConf(self.engine).addBinnacle(self.idUser,self.penColor, self.fillColor)
                 
 
         penColorButton = tkinter.Button(sideBar, text = "Pick Pen Color", command=getPenColor)
@@ -235,7 +245,7 @@ class DrawingApplication(tkinter.Frame):
                 # Se almacena el valor del fillColor seleccionado en la variable Self.fillcolor
                 self.fillColor = color[1]
                 # Se llama a la funcion addBinnacle de la clase Colorconf
-                ColorConf().addBinnacle(self.idUser,self.penColor, self.fillColor)
+                ColorConf(self.engine).addBinnacle(self.idUser,self.penColor, self.fillColor)
 
         fillColorButton = tkinter.Button(sideBar, text = "Pick Fill Color", command=getFillColor)
         fillColorButton.pack(fill=tkinter.BOTH)

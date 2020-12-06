@@ -8,6 +8,7 @@ from Core.proyecto import *
 from Core.User import *
 from Core.MySQLEngine import *
 
+
 class LoginInit:
     def __init__(self):
         self.ventana = Tk()
@@ -46,14 +47,13 @@ class LoginInit:
         return self.password.get()
     
     def send(self):
-        config = ConnectionConfig("localhost","3306","admin","admin","Proyecto1") 
+        config = ConnectionConfig("192.168.137.161","3306","admin","admin","Proyecto") 
 
         engie = MySQLEngine(config)
         temp = User(engie).searchUsers(self.getUser(),self.getPassword())
-
-        if (temp[2]):  
-            # Enviarle el id del usuario al qe pertenece
-            drawWindows = DrawingApplication().buildWindow(engie, self.getUser(),self.getPassword(),temp[3])
+        if (temp[0]):  
+            #Enviarle el id del usuario al qe pertenece
+            drawWindows = DrawingApplication().buildWindow(engie, self.getUser(),self.getPassword(),temp[1])
 
         self.ventana.quit
 

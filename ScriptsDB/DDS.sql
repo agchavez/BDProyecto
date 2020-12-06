@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS Proyecto1;
-CREATE DATABASE Proyecto1 CHARACTER SET utf8;
-USE Proyecto1;
+DROP DATABASE IF EXISTS Proyecto;
+CREATE DATABASE Proyecto CHARACTER SET utf8;
+USE Proyecto;
 
 CREATE TABLE IF NOT EXISTS User(
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Paint(
 CREATE TABLE IF NOT EXISTS Binnacle(
         id INT AUTO_INCREMENT PRIMARY KEY,
         dat_date TIMESTAMP DEFAULT NOW() ON UPDATE NOW() COMMENT "Fecha de los cambios",
-        tex_action ENUM('Login','Create','Delete','Update') NOT NULL COMMENT "Acción que realiza el usuario ya sea operador o administrador",
+        tex_action ENUM('Login','Insert','Delete','Update','ColorConf') NOT NULL COMMENT "Acción que realiza el usuario ya sea operador o administrador",
         id_user INT NOT NULL COMMENT "Llave foranéa de la tabla de User",
         var_fillColor VARCHAR(7) COMMENT "Color de fondo hexadecimal",
         var_penColor VARCHAR(7) COMMENT "Color de lápiz decimal",
@@ -251,7 +251,6 @@ CREATE PROCEDURE sp_searchAdmin(
                 IF (theadmin = var_userNam AND thepasswor = var_passwor AND theType = 0) THEN
                     SET result = 0;
                     SET id_user = idUser;
-                    CALL sp_addBinnacle(id_user);
                     LEAVE getUser;
                 END IF;
 
@@ -304,24 +303,24 @@ CREATE PROCEDURE sp_searchUsers(
         BEGIN 
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Login",id_user, "","");
         END $$
-DELIMITER ;
     -- Agregar bitacora de configuracion de colores
     CREATE PROCEDURE sp_ColorConfig(
         IN id_user INT, IN penColor VARCHAR(7), IN fillColor VARCHAR(7)
         )BEGIN
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("ColorConf",id_user,fillColor,penColor);
         END $$
+DELIMITER ;
     -- Creacion de los trigger
 
     DROP TRIGGER IF EXISTS InsertPaint;
 
-    --Tigger de insertar dibujo
+    -- Tigger de insertar dibujo
     CREATE TRIGGER InsertPaint AFTER INSERT ON Paint
         FOR EACH ROW
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Insert",NEW.id_user, "","");
 
     DROP TRIGGER IF EXISTS DeletePaint;
-    --Tigger de eliminar dibujos
+    -- Tigger de eliminar dibujos
     CREATE TRIGGER DeletePaint AFTER DELETE ON Paint
         FOR EACH ROW
             INSERT INTO Binnacle(tex_action,id_user, var_fillColor, var_penColor) VALUES ("Delete",OLD.id_user, "","");
