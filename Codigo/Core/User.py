@@ -62,15 +62,15 @@ class User():
             return False
         
     def searchAdmin(self,user=None,password=None):
-        query = self.engie.management('sp_searchAdmin',(user, password, None))
+        query = self.engie.management('sp_searchAdmin',(user, password, None, None))
         if query[2] == 0:
-            return True
+            return (True, query[3])
         else:
-            return False
+            return (False, query[3])
 
     def searchUsers(self, user=None, password=None):
-        query = self.engie.management('sp_searchUsers',(user, password, None))
+        query = self.engie.management('sp_searchUsers',(user, password, None, None))
         if query[2] == 0:
-            return True
+            return (True, query[3])
         else:
-            return False
+            return (False, query[3])

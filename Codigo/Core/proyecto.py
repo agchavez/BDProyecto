@@ -11,7 +11,7 @@ from Core.configUser import *
 from Core.User import *
 #from Core.bitacoraUsuario import *
 from Core.Paint import *
-
+from Core.ColorConf import *
 from tkinter import *
 from tkinter import Tk
 import tkinter as tk 
@@ -35,10 +35,13 @@ class DrawingApplication(tkinter.Frame):
         self.graphicsCommands = PyList()
         #self.buildWindow()
 
-    def buildWindow(self, engine=None, user=None, password=None):
+    def buildWindow(self, engine=None, user=None, password=None, id= None):
         self.engine = engine  
         self.user = user 
-        self.password = password 
+        self.password = password
+        self.idUser = id
+        self.penColor = '#000000'
+        self.fillColor = '#000000' 
 
         self.master.title("Draw")
         bar = tkinter.Menu(self.master)
@@ -202,12 +205,17 @@ class DrawingApplication(tkinter.Frame):
         penEntry = tkinter.Entry(sideBar,textvariable=penColor)
         penEntry.pack()
 
-        penColor.set("#000000")
+        penColor.set(self.penColor)
 
         def getPenColor():
             color = tkinter.colorchooser.askcolor()
             if color != None:
                 penColor.set(str(color)[-9:-2])
+                # Se almacena el valor del fillColor seleccionado en la variable Self.fillcolor
+                self.penColor = color[1]
+                # Se llama a la funcion addBinnacle de la clase Colorconf
+                ColorConf().addBinnacle(self.idUser,self.penColor, self.fillColor)
+                
 
         penColorButton = tkinter.Button(sideBar, text = "Pick Pen Color", command=getPenColor)
         penColorButton.pack(fill=tkinter.BOTH)
@@ -218,12 +226,16 @@ class DrawingApplication(tkinter.Frame):
         fillEntry = tkinter.Entry(sideBar,textvariable=fillColor)
         fillEntry.pack()
 
-        fillColor.set("#000000")
+        fillColor.set(self.fillColor)
 
         def getFillColor():
             color = tkinter.colorchooser.askcolor()
             if color != None:
                 fillColor.set(str(color)[-9:-2])
+                # Se almacena el valor del fillColor seleccionado en la variable Self.fillcolor
+                self.fillColor = color[1]
+                # Se llama a la funcion addBinnacle de la clase Colorconf
+                ColorConf().addBinnacle(self.idUser,self.penColor, self.fillColor)
 
         fillColorButton = tkinter.Button(sideBar, text = "Pick Fill Color", command=getFillColor)
         fillColorButton.pack(fill=tkinter.BOTH)
