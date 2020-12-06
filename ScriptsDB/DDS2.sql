@@ -10,6 +10,4 @@ CREATE TABLE IF NOT EXISTS Draw(
 )COMMENT "Descripción de la tabla Dibujo";
 
 
-
-
 INSERT INTO Draw(var_Name, blo_Content) VALUES("prueba","{}");

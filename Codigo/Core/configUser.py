@@ -1,10 +1,15 @@
 """
-    @autor agchavez@unah.hn @david.jacome@unah.hn 
+    @autor agchavez@unah.hn @david.jacome@unah.hn @aajimezez@unah.hn
     @Date 2020/11/26
     @Version 1.0
 """
 
 #from actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
+from tkinter import *
+from tkinter import ttk
+from tkinter.ttk import Style
+from tkinter import messagebox
+
 import tkinter
 import turtle
 import xml
@@ -17,65 +22,33 @@ from Core.User import *
 import json
 import re
 
-temp = []
-      
-class ConfigUser(tkinter.Toplevel):
-    def __init__(self, master=None):
-        super().__init__(master)
+temp = []   
+class ConfigUser:
+    def __init__(self):
+        pass
 
-    def buildWindow(self,engie=None):
-        self.master.title("Configure User")
-
-        def saveFile():
-            print('guardo')
-            filename = tkinter.filedialog.asksaveasfilename(title="Save Picture As...")
-
-        sideBar = tkinter.Frame(self,padx=300,pady=300)
-        sideBar.pack(side=tkinter.BOTTOM, fill=tkinter.BOTH)
-
-        nameLabel = tkinter.Label(sideBar,text="Nombre")
-        nameLabel.pack()
-        name = tkinter.StringVar()
-        widthEntry = tkinter.Entry(sideBar,textvariable=name)
-        widthEntry.pack()
-
-        passwordLabel = tkinter.Label(sideBar,text="Contraseña")
-        passwordLabel.pack()
-        password = tkinter.StringVar()
-        radiusEntry = tkinter.Entry(sideBar,textvariable=password)
-        radiusEntry.pack()
-
-        pentColorLabel = tkinter.Label(sideBar,text="Pent-Color")
-        pentColorLabel.pack()
-        pentColor = tkinter.StringVar()
-        radiusEntry = tkinter.Entry(sideBar,textvariable = pentColor)
-        radiusEntry.pack()
-
-        fillColorLabel = tkinter.Label(sideBar,text="Fill-color")
-        fillColorLabel.pack()
-        fillColor = tkinter.StringVar()
-        radiusEntry = tkinter.Entry(sideBar,textvariable=fillColor)
-        radiusEntry.pack()
-
-        #widthSize.set(str(1))
-
+    def buildWindow(self, engie=None): 
         def getUserName():
-            return name.get()
+            return nameEntry.get()
 
         def getPassword():
-            return password.get()
+            return passwordEntry.get()
 
         def getFillColor():
-            if (re.match("#[A-F0-F]{6}",fillColor.get())):
-                return fillColor.get()
+            if (re.match("^#(?:[0-9a-fA-F]{3}){1,2}$",fillColorEntry.get())):
+                return fillColorEntry.get()
 
         def getPenColor():
-            if (re.match("#[A-F0-F]{6}",pentColor.get())):
-                return pentColor.get()     
+            if (re.match("^#(?:[0-9a-fA-F]{3}){1,2}$",pentEntry.get())):
+                return pentEntry.get()     
 
         def save():
             a = User(engie)
-            a.addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
+            if (getFillColor() != None and getPenColor() != None):
+                a.addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
+                messagebox.showinfo(message="Usuario registrado con éxito", title="SUCCESS")
+            else:
+                messagebox.showwarning(message="Ingrese un hexadecimal en las casillas PenColor y FillColor", title="ERROR")
 
         def delete(idUser = None):
             a = User(engie)
@@ -87,18 +60,53 @@ class ConfigUser(tkinter.Toplevel):
             id =  a.loginUser(getUserName(),getPassword())
             a.updateUser(getUserName(),getPassword(),1,getPenColor(), getFillColor(),id)
 
-        circleButton = tkinter.Button(sideBar, text = "Save", command=save).place(x=180, y=100)
-        circleButton2 = tkinter.Button(sideBar, text = "Delete", command=delete)
-        circleButton2.place(x=180, y=180)
-        circleButton3 = tkinter.Button(sideBar, text = "Update", command=update).place(x=250, y=180)
-        
-        circleButton.pack(fill=tkinter.BOTH)
+        ventana = Tk()
+        ventana.configure(background="#222222")
+        ancho_ventana = 600
+        alto_ventana = 600
+        x_ventana = ventana.winfo_screenwidth() // 2 - ancho_ventana // 2
+        y_ventana = ventana.winfo_screenheight() // 2 - alto_ventana // 2
+        posicion = str(ancho_ventana) + "x" + str(alto_ventana) + "+" + str(x_ventana) + "+" + str(y_ventana)
+        ventana.geometry(posicion)
+        ventana.resizable(0,0)
+        ventana.title("Configuración de usuarios")
 
-def main():
-    root = tkinter.Tk()
-    drawingApp = ConfigUser(root)
-    drawingApp.mainloop()
-    print("Program Execution Completed.")
+        instruccionLabel = Label(ventana,text="Intrucciones",fg="#FF0000",bg="#222222")
+        instruccionLabel.grid(pady=3,padx=2)
+        instruccionLabel1 = Label(ventana,text="* Eliminar: Ingrese solo el usuario",fg="#FF0000",bg="#222222")
+        instruccionLabel1.grid(pady=3,padx=3)
+        instruccionLabel2 = Label(ventana,text="* Actualizar: Ingrese usuario y contraseña",fg="#FF0000",bg="#222222")
+        instruccionLabel2.grid(pady=3,padx=3)
 
-if __name__ == "__main__":
-    main()
+        nameLabel = Label(ventana,text="Nombre",fg="#FFFFFF",bg="#222222")
+        nameLabel.grid(pady=15,padx=225)
+        name = StringVar()
+        nameEntry = Entry(ventana, textvariable = name)
+        nameEntry.grid(pady=5,padx=225)
+
+        passwordLabel = Label(ventana,text="Contraseña",fg="#FFFFFF",bg="#222222")
+        passwordLabel.grid(pady=5,padx=225)
+        password = StringVar()
+        passwordEntry = Entry(ventana,textvariable=password)
+        passwordEntry.grid(pady=5,padx=225)
+
+        pentColorLabel = Label(ventana,text="Pent-Color",fg="#FFFFFF",bg="#222222")
+        pentColorLabel.grid(pady=5,padx=225)
+        pentColor = StringVar()
+        pentEntry = Entry(ventana,textvariable = pentColor)
+        pentEntry.grid(pady=5,padx=225)
+
+        fillColorLabel = Label(ventana,text="Fill-color",fg="#FFFFFF",bg="#222222")
+        fillColorLabel.grid(pady=5,padx=225)
+        fillColor = StringVar()
+        fillColorEntry = Entry(ventana,textvariable=fillColor)
+        fillColorEntry.grid(pady=5,padx=225)
+
+        circleButton =  Button(ventana, text = "Save", command=save)
+        circleButton.grid(pady=5,padx=225)
+        circleButton2 = Button(ventana, text = "Delete", command=delete)
+        circleButton2.grid(pady=5,padx=225)
+        circleButton3 = Button(ventana, text = "Update",command=update)
+        circleButton3.grid(pady=5,padx=225)
+
+        ventana.grid()

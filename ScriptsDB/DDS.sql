@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS Proyecto;
-CREATE DATABASE Proyecto CHARACTER SET utf8;
-USE Proyecto;
+DROP DATABASE IF EXISTS Proyecto1;
+CREATE DATABASE Proyecto1 CHARACTER SET utf8;
+USE Proyecto1;
 
 CREATE TABLE IF NOT EXISTS User(
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -104,10 +104,10 @@ DROP PROCEDURE IF EXISTS sp_addUser;
 CREATE PROCEDURE sp_addUser(
     IN serName VARCHAR(20), IN passwor VARCHAR(20), 
     IN typex BIT, IN penColor VARCHAR(7), IN fillColor VARCHAR(7), 
-    OUT result BIT
+    OUT result INT
 )
     BEGIN 
-        INSERT INTO User(var_userName, var_password, bit_type, var_fillColor, var_penColor ) VALUE (serName, passwor, typex, fillColor, penColor);
+        INSERT INTO User(var_userName, var_password, bit_type, var_fillColor, var_penColor ) VALUE (serName, passwor, typex, penColor, fillColor);
         SET result = lAST_INSERT_ID();
     END $$
 
@@ -151,6 +151,44 @@ CREATE PROCEDURE sp_searchPaint(
         SET j_data = (SELECT jso_data FROM Paint WHERE id = id_paint);
     END $$
 
+
+
+DROP PROCEDURE IF EXISTS sp_searchPaints;
+CREATE PROCEDURE sp_searchPaints(
+    IN id_user INT, 
+    OUT idPaint INT, 
+    OUT result BIT
+) 
+    BEGIN
+        DECLARE thePaintID INT;
+        DECLARE theUserID INT;
+        DECLARE finished INT DEFAULT 0;
+
+        DECLARE cursorPaint
+                CURSOR FOR 
+                    SELECT Paint.id, User.id FROM User JOIN Paint ON User.id = Paint.id_User;
+
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+
+        OPEN cursorPaint;
+            getUser: LOOP 
+                FETCH cursorPaint INTO thePaintID, theUserID;
+                IF finished = 1 THEN
+                    LEAVE getUser;
+                END IF;
+
+                IF (theUserID = id_user) THEN
+                    SET idPaint = thePaintID;
+                    SET result = 1;
+                    LEAVE getUser;
+                END IF;
+
+            END LOOP getUser;
+        CLOSE cursorPaint;  
+    END $$
+
+
+
 DROP PROCEDURE IF EXISTS sp_addPaint;
 -- Agregar Dibujos
 CREATE PROCEDURE sp_addPaint(
@@ -159,7 +197,7 @@ CREATE PROCEDURE sp_addPaint(
     OUT result BIT
 )
     BEGIN 
-        INSERT INTO Paint(var_name, jso_data, id_user ) VALUE (paintName, jso_data,id_user);
+        INSERT INTO Paint(var_name, jso_data, id_user) VALUE (paintName, jso_data,id_user);
         SET result = 1;
     END $$
 

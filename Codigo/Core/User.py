@@ -24,12 +24,8 @@ class User():
     def addUser(self, userName, password, typex, penColor, fillColor):
         #Comprobar si el usuario exite en la base de datos del usuario
         temp = self.engie.management('sp_searchUser',(userName, None))
-        
-        if temp[1] == 1:
-            print('El nombre del usuario ya existe')
-            return True
-            
-        elif temp[1] == 0:
+
+        if temp[1] == 0:
             query = self.engie.management('sp_addUser',(userName,password,typex, penColor, fillColor, None))
 
             if query[5] > 0:
@@ -39,6 +35,11 @@ class User():
             else:
                 print('ERROR al guardar')
                 return False
+
+        if temp[1] == 1:
+            print('El nombre del usuario ya existe')
+            return True
+            
                 
     #Eliminar usuario
     def dropUser(self, id):
@@ -53,7 +54,7 @@ class User():
     #Modificar usuarios
     def updateUser(self,userName, password, typex, penColor, fillColor,id):
         query = self.engie.management('sp_updateUser',(userName,password,typex, penColor, fillColor, id, None))
-        if query[5] == 6:
+        if query[6] == 1:
             print('Usuario actualizado con exito')
             return True
         else:
