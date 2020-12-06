@@ -130,7 +130,7 @@ class DrawingApplication(tkinter.Frame):
         def configure():
             config = ConfigUser().buildWindow(self.engine)
 
-        if (User(self.engine).searchAdmin(self.user, self.password)):   
+        if (User(self.engine).searchAdmin(self.user, self.password)[0]):   
             fileMenu.add_command(label="Configure", command=configure)
 
         def write(filename):
