@@ -8,6 +8,7 @@ from Core.proyecto import *
 from Core.User import *
 from Core.MySQLEngine import *
 
+import configparser
 
 class LoginInit:
     def __init__(self):
@@ -47,9 +48,11 @@ class LoginInit:
         return self.password.get()
     
     def send(self):
-        config = ConnectionConfig("192.168.137.161","3306","admin","admin","Proyecto") 
+        config = configparser.ConfigParser() 
+        config.read('config.ini')
+        engie =  MySQLEngine(config['DATABASE'])
 
-        engie = MySQLEngine(config)
+        #engie = MySQLEngine(config)
         temp = User(engie).searchUsers(self.getUser(),self.getPassword())
         if (temp[0]):  
             #Enviarle el id del usuario al qe pertenece

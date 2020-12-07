@@ -330,3 +330,7 @@ DELIMITER ;
     CREATE TRIGGER UpdatePaint AFTER UPDATE ON Paint
         FOR EACH ROW
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update",NEW.id_user, "","");
+
+INSERT INTO User(var_userName,var_password,var_fillColor, var_penColor, bit_type) VALUES 
+    ("admin","admin",'#FFFFFF','#FFFFFF', 0)
+;

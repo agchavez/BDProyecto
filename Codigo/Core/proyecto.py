@@ -9,6 +9,7 @@
 from Core.actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
 from Core.configUser import *
 from Core.User import *
+from Core.MySQLEngine import *
 #from Core.bitacoraUsuario import *
 from Core.Paint import *
 from Core.ColorConf import *
@@ -66,7 +67,7 @@ class DrawingApplication(tkinter.Frame):
             self.graphicsCommands = PyList()
             
 
-        fileMenu.add_command(label="New",command=newWindow)
+        fileMenu.add_command(label="New", command=newWindow)
 
         def parse(data):
             #print(data) 
@@ -432,14 +433,34 @@ class DrawingApplication(tkinter.Frame):
             self.contenedor = Frame(ventana)
             self.lbl_titulo = Label(self.contenedor, text="Bitacora de usuarios",fg="#FFFFFF",bg="#222222",font=("times new roman",24))
             self.lbl_titulo.grid(pady=20)
-            self.tabla = ttk.Treeview(self.contenedor, columns=('#1','#2'))
-            self.tabla.column("#2", width=395, stretch=NO)
-            self.tabla.grid(row=3,pady=20,padx=25)
+            self.tabla = ttk.Treeview(ventana, columns=('#1','#2','3','4'))
+            self.tabla.column("#0", width=120)
+            self.tabla.column("#1", width=140)
+            self.tabla.column("#3", width=160)
+            self.tabla.column("#4", width=160)
+            self.tabla.grid(row=4,pady=20,padx=25)
             self.tabla.heading("#0", text="Fecha",anchor=CENTER)
             self.tabla.heading("#1", text="Usuario",anchor=CENTER)
-            self.tabla.heading("#2", text="Actividad",anchor=CENTER)
-            self.tabla.insert('',0,text="5/12/2020",values=("Jacome","Enamorando a Vanessa"))
-            self.tabla.insert('',0,text="5/12/2020",values=("Jacome","Enamorando a Vanessa parte II"))
+            self.tabla.heading("#2", text="Actividad",anchor=CENTER) 
+            self.tabla.heading("#3", text="PenColor",anchor=CENTER)
+            self.tabla.heading("#4", text="FillColor",anchor=CENTER)
             self.contenedor.configure(background="#222222")
+            mostrarDatos()
             self.contenedor.grid()
-            ventana.mainloop()
+            #ventana.mainloop()
+
+        def mostrarDatos():
+            if(User(self.engine).searchAdmin(self.user, self.password)[0]):
+                datos = "SELECT DISTINCT Binnacle.dat_date, User.var_userName, Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id"
+            else: 
+                datos = "SELECT DISTINCT Binnacle.dat_date, User.var_userName, Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
+
+            dates = self.engine.select(datos)
+            for values in dates:
+                date = values[0]
+                name = values[1]
+                action = values[2]
+                penColor1 = values[3]
+                fillColor1 = values[4]
+
+                self.tabla.insert('',0,text=date,values=(name, action,penColor1,fillColor1))
