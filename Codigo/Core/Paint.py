@@ -40,7 +40,15 @@ class Paint():
         else:
             print('ERROR al eliminar')
             return False
-        
+    
+    def searchPaintName(self, namePaint, idUser):
+        query = self.engine.management('sp_searchPaintName',(idUser,namePaint, None, None))
+        temp = [True,query[3]]
+        if query[2] == 1:
+            return temp
+        else:
+            return False 
+
     def updatePaint(self,data,id):
         query = self.engine.management('sp_updatePaint',(data,id, None))
         if query[2] == 1:

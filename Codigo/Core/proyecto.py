@@ -153,6 +153,20 @@ class DrawingApplication(tkinter.Frame):
             
             id = User(self.engine).loginUser(self.user,self.password)
             Paint(self.engine).addPaint(filename, json , id)
+
+        def updateDraw():
+            return drawingJson(self.id_P)
+        
+        def drawingJson(id_Draw):
+            temp = [] 
+            json = ""
+            for cmd in self.graphicsCommands:
+                temp.append(str(cmd))
+            json += '{"GraphicsCommands": {"Commands": ['
+            json += ','.join(temp)
+            json += ']}'
+            json += "}"
+            Paint(self.engine).updatePaint(json , id_Draw)
             
         def saveFile():
             run2() 
@@ -386,8 +400,8 @@ class DrawingApplication(tkinter.Frame):
             self.ventana2 = Tk()
             self.colorFondo = "#222222"
             self.colorLetra = "#FFF"
-            ancho_ventana = 300
-            alto_ventana = 200
+            ancho_ventana = 400
+            alto_ventana = 300
             x_ventana = self.ventana2.winfo_screenwidth() // 2 - ancho_ventana // 2
             y_ventana = self.ventana2.winfo_screenheight() // 2 - alto_ventana // 2
             self.ventana2.configure(background=self.colorFondo)
@@ -403,8 +417,23 @@ class DrawingApplication(tkinter.Frame):
             self.entry = Entry(self.ventana2,width=20,textvariable=self.fileNames)
             self.entry.grid(pady=5, padx=70)
 
-            self.boton1 = tk.Button(self.ventana2, text="Save", command = save,width=10)
+            self.boton1 = tk.Button(self.ventana2, text="Save", command = check,width=10)
             self.boton1.grid(pady=5, padx=70)
+
+        def check():
+            namePaint = self.entry.get()
+            result = Paint(self.engine).searchPaintName(namePaint, idUser=self.idUser)
+            #print(result)
+            #Si result es verdadero significa que encontro un dibujo con un nombre igual al que queremos asignar.
+            #Por tanto le preguntara al usuario si quiere modificar el dibujo que ya estaba guardado o quiere guardar con un nuevo nombre.
+            if(result == False):
+               save()
+            else:
+                self.id_P = result[1]
+                self.label2 = Label(self.ventana2, text="Nombre de dibujo ya registrado",fg="#FF0000",bg="#222222")
+                self.label2.grid(pady=20, padx=100)
+                self.boton2 = tk.Button(self.ventana2, text="Actualizar dibujo", command = updateDraw,width=15)
+                self.boton2.grid(pady=5, padx=100)
 
         def save():
             return write(self.entry.get())
@@ -423,14 +452,14 @@ class DrawingApplication(tkinter.Frame):
             ventana.title("Bitacora de usuarios")
 
             self.contenedor = Frame(ventana)
-            self.lbl_titulo = Label(self.contenedor, text="Bitacora de usuarios",fg="#FFFFFF",bg="#222222",font=("times new roman",24))
+            self.lbl_titulo = Label(ventana, text="Bitacora de usuarios",fg="#FFFFFF",bg="#222222",font=("times new roman",24))
             self.lbl_titulo.grid(pady=20)
             self.tabla = ttk.Treeview(ventana, columns=('#1','#2','3','4'))
-            self.tabla.column("#0", width=120)
+            self.tabla.column("#0", width=170)
             self.tabla.column("#1", width=140)
-            self.tabla.column("#3", width=160)
-            self.tabla.column("#4", width=160)
-            self.tabla.grid(row=4,pady=20,padx=25)
+            self.tabla.column("#3", width=125)
+            self.tabla.column("#4", width=125)
+            self.tabla.grid(row=4,pady=50,padx=30)
             self.tabla.heading("#0", text="Fecha",anchor=CENTER)
             self.tabla.heading("#1", text="Usuario",anchor=CENTER)
             self.tabla.heading("#2", text="Actividad",anchor=CENTER) 
@@ -444,7 +473,7 @@ class DrawingApplication(tkinter.Frame):
             if(User(self.engine).searchAdmin(self.user, self.password)[0]):
                 datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id"
             else: 
-                datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor,, Binnacle.var_fillColor, FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
+                datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor, FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
 
             dates = self.engine.select(datos)
             for values in dates:

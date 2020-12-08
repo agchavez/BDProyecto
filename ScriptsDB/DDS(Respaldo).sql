@@ -68,3 +68,7 @@ CREATE PROCEDURE sp_addPaint(
     END $$
 
 DELIMITER ;
+
+
+INSERT INTO User(var_userName, var_password, var_fillColor, var_penColor, bit_type) 
+VALUES ("admin","admin",'#FFFFFF','#222222',0); 

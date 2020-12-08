@@ -305,6 +305,38 @@ CREATE PROCEDURE sp_ColorConfig(
     INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("ColorConf",id_user,fillColor,penColor);
 END $$
 
+DROP PROCEDURE IF EXISTS sp_searchPaintName;
+CREATE PROCEDURE sp_searchPaintName(
+    IN id_User INT,
+    IN namePaint VARCHAR(20),
+    OUT result BIT,
+    OUT id_Paint INT
+)BEGIN
+    DECLARE id_U INT;
+    DECLARE name_Paint VARCHAR(20);
+    DECLARE finish INT DEFAULT 0;
+    DECLARE id_P INT;
+    DECLARE cursorPaint
+            CURSOR FOR
+                SELECT CAST(AES_DECRYPT(var_name,'admin')AS CHAR), id, id_user FROM Paint;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finish = 1;
+
+    OPEN cursorPaint;
+        getPaint: LOOP
+            FETCH cursorPaint INTO name_Paint, id_P , id_U;
+            IF finish = 1 THEN
+                LEAVE getPaint;
+            END IF;
+
+            IF (id_U = id_User AND name_Paint = namePaint) THEN
+                SET id_Paint = id_P;
+                SET result = 1;
+                LEAVE getPaint;
+            END IF;
+        END LOOP getPaint;
+    CLOSE cursorPaint;
+END$$
 
 DELIMITER ;
     -- Creacion de los trigger
@@ -315,23 +347,22 @@ DELIMITER ;
     CREATE TRIGGER InsertPaint AFTER INSERT ON Paint
         FOR EACH ROW
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Insert", NEW.id_user, "","");
-            INSERT INTO BackupDB.Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Insert", NEW.id_user, "","");
+
 
     DROP TRIGGER IF EXISTS DeletePaint;
     -- Tigger de eliminar dibujos
     CREATE TRIGGER DeletePaint AFTER DELETE ON Paint
         FOR EACH ROW
             INSERT INTO Binnacle(tex_action,id_user, var_fillColor, var_penColor) VALUES ("Delete", OLD.id_user, "","");
-            INSERT INTO BackupDB.Binnacle(tex_action,id_user, var_fillColor, var_penColor) VALUES ("Delete", OLD.id_user, "","");
 
     DROP TRIGGER IF EXISTS UpdatePaint;
     -- Tigger de Actualizar dibujo
     CREATE TRIGGER UpdatePaint AFTER UPDATE ON Paint
         FOR EACH ROW
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
-            INSERT INTO BackupDB.Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
+
 
 
 SET @admin = 0;
 
-CALL sp_addUser("admin","admin",0,'#FFFFFF','#FFFFFF', @admin);
+CALL sp_addUser("admin","admin",0,'#FFFFFF','#222222', @admin);
