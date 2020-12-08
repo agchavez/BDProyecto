@@ -22,10 +22,9 @@ CREATE TABLE IF NOT EXISTS Paint(
 CREATE TABLE IF NOT EXISTS Binnacle(
         id INT AUTO_INCREMENT PRIMARY KEY,
         dat_date TIMESTAMP DEFAULT NOW() ON UPDATE NOW() COMMENT "Fecha de los cambios",
-        tex_action ENUM('Login','Insert','Delete','Update','ColorConf') NOT NULL COMMENT "Acción que realiza el usuario ya sea operador o administrador",
+        tex_action ENUME('Login','Insert','Delete','Update','ColorConf') NOT NULL COMMENT "Acción que realiza el usuario ya sea operador o administrador",
+        tex_namePaint VARCHAR(20) NOT NULL COMMENT "Nombre del dibujo creado",
         id_user INT NOT NULL COMMENT "Llave foranéa de la tabla de User",
-        var_fillColor VARCHAR(7) COMMENT "Color de fondo hexadecimal",
-        var_penColor VARCHAR(7) COMMENT "Color de lápiz decimal",
         FOREIGN KEY (id_user) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE
 )COMMENT "Descripción de la tabla  de bitacora(Binnacle) con sus respectivos campos";
 
@@ -68,6 +67,9 @@ CREATE PROCEDURE sp_addPaint(
     END $$
 
 DELIMITER ;
+CREATE TRIGGER InsertPaint AFTER INSERT ON Paint
+        FOR EACH ROW
+            INSERT INTO Binnacle(tex_action,id_user,tex_namePaint) VALUES ("Insert", NEW.id_user,NEW.blob_name);
 
 
 INSERT INTO User(var_userName, var_password, var_fillColor, var_penColor, bit_type) 
