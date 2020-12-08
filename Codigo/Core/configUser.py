@@ -27,7 +27,7 @@ class ConfigUser:
     def __init__(self):
         pass
 
-    def buildWindow(self, engie=None): 
+    def buildWindow(self, engie=None,engiebdb = None): 
         def getUserName():
             return nameEntry.get()
 
@@ -46,6 +46,7 @@ class ConfigUser:
             a = User(engie)
             if (getFillColor() != None and getPenColor() != None):
                 a.addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
+                UserBDB(engiebdb).addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
                 messagebox.showinfo(message="Usuario registrado con éxito", title="SUCCESS")
             else:
                 messagebox.showwarning(message="Ingrese un hexadecimal en las casillas PenColor y FillColor", title="ERROR")

@@ -11,7 +11,7 @@ from Core.User import *
 from Core.MySQLEngine import *
 from Core.Paint import *
 from Core.ColorConf import *
-
+from Core.ConsultasBDB import *
 from tkinter import *
 from tkinter import Tk
 import tkinter as tk 
@@ -26,6 +26,8 @@ import xml.etree.ElementTree as ET
 import tkinter.colorchooser
 import tkinter.filedialog
 import json
+import configparser
+
 
   
 class DrawingApplication(tkinter.Frame):
@@ -44,6 +46,9 @@ class DrawingApplication(tkinter.Frame):
         self.master.title("Draw")
         bar = tkinter.Menu(self.master)
         fileMenu = tkinter.Menu(bar,tearoff=0)
+        config = configparser.ConfigParser() 
+        configbdb.read('config.ini')
+        self.engiebdb =  MySQLEngine(config['DATABASERESPALDO'])
 
         def ColorDefaul():
             query = ColorConf(self.engine).searchColor(self.idUser)
@@ -62,6 +67,7 @@ class DrawingApplication(tkinter.Frame):
             ColorDefaul()
             penColor.set(self.penColor)
             fillColor.set(self.fillColor)
+            downloadMenu(False)
             self.graphicsCommands = PyList()
             
 
@@ -107,6 +113,7 @@ class DrawingApplication(tkinter.Frame):
                 cmd.draw(theTurtle)
 
             screen.update()
+            downloadMenu(True)
             #print(graphicsCommands)
 
         #cargar dibujo desde la base de datos solo si pertenecen a ese usuario de acuerdo al id
@@ -141,6 +148,15 @@ class DrawingApplication(tkinter.Frame):
         if (User(self.engine).searchAdmin(self.user, self.password)[0]):   
             fileMenu.add_command(label="Configure", command=configure)
 
+        def downloadMenu(temp):
+            if(temp):
+                fileMenu.add_command(label="Download", command=download)
+            else:
+                if (User(self.engine).searchAdmin(self.user, self.password)[0]):
+                    fileMenu.delete(6)
+                else:
+                    fileMenu.delete(5)
+
         def write(filename):
             temp = [] 
             json = ""
@@ -153,6 +169,7 @@ class DrawingApplication(tkinter.Frame):
             
             id = User(self.engine).loginUser(self.user,self.password)
             Paint(self.engine).addPaint(filename, json , id)
+            paintBDB(self.engiebdb).addPaint(filename, json , id)
 
         def updateDraw():
             return drawingJson(self.id_P)
@@ -172,7 +189,15 @@ class DrawingApplication(tkinter.Frame):
             run2() 
 
         def download():
-            pass
+            print(self.idUser,self.namePaint)
+            paintdbd = paintBDB(self.engiebdb).showPaints(self.idUser,self.namePaint)
+            if(paintdbd[0]):
+                filename = tkinter.filedialog.asksaveasfilename(title="Descargar dibujo...")
+                file = open(filename, "w")
+                file.write(paintdbd[1])
+
+            else:
+                print('ERROR con la base de datos B')
 
         def viewBinnacle():
             binnacle()
@@ -384,6 +409,7 @@ class DrawingApplication(tkinter.Frame):
         def loadDraw():
             r = self.combobox1.get().split(" ")
             id = r[0]   
+            self.namePaint = r[1] 
             jsons = self.paint.searchPaint(id)
             b = json.loads(jsons)
             return parse(b)
