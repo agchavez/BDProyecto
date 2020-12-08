@@ -52,10 +52,8 @@ class LoginInit:
         config.read('config.ini')
         engie =  MySQLEngine(config['DATABASE'])
 
-        #engie = MySQLEngine(config)
         temp = User(engie).searchUsers(self.getUser(),self.getPassword())
         if (temp[0]):  
-            #Enviarle el id del usuario al qe pertenece
             drawWindows = DrawingApplication().buildWindow(engie, self.getUser(),self.getPassword(),temp[1])
 
         self.ventana.quit

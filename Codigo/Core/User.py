@@ -3,7 +3,7 @@ class User():
         self.engie = engine
 
     def showUser(self):
-        users = self.engie.select("SELECT * FROM User ORDER BY id ASC")
+        users = self.engie.select("SELECT id, CAST(AES_DECRYPT(var_userName,'admin')AS CHAR), CAST(AES_DECRYPT(var_password,'admin')AS CHAR), bit_type, id FROM User ORDER BY id ASC;")
         print(users)
     
     # Buscar usuario

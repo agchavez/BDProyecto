@@ -1,5 +1,5 @@
 import mysql.connector
-from Core.ConnectionConfig import *
+#from Core.ConnectionConfig import *
 
 class MySQLEngine:
     def __init__(self, config = {}):

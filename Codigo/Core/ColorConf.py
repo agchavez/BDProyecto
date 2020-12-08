@@ -1,5 +1,4 @@
 class ColorConf():
-
     def __init__(self, engie=None):
         self.engie = engie
 
@@ -8,5 +7,5 @@ class ColorConf():
         self.engie.management('sp_ColorConfig',(id, pencolor, filcolor))
     
     def searchColor(self, id):
-        return self.engie.select("SELECT var_fillColor, var_penColor FROM User WHERE id = %s" % id)
+        return self.engie.select("SELECT DISTINCT CAST(AES_DECRYPT(var_fillColor,'admin')AS CHAR), CAST(AES_DECRYPT(var_penColor,'admin')AS CHAR) FROM User WHERE id = %s" % id)
         

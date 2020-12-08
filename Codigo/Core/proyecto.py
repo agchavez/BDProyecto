@@ -5,14 +5,13 @@
     @Version 1.0
 """
 
-#from Core.loadPaint import *
 from Core.actionss import PyList, BeginFillCommand, CircleCommand, PenDownCommand, GoToCommand, EndFillCommand, PenUpCommand
 from Core.configUser import *
 from Core.User import *
 from Core.MySQLEngine import *
-#from Core.bitacoraUsuario import *
 from Core.Paint import *
 from Core.ColorConf import *
+
 from tkinter import *
 from tkinter import Tk
 import tkinter as tk 
@@ -34,7 +33,6 @@ class DrawingApplication(tkinter.Frame):
         super().__init__(master)
         self.pack()
         self.graphicsCommands = PyList()
-        #self.buildWindow()
 
     def buildWindow(self, engine=None, user=None, password=None, id= None):
         self.engine = engine  
@@ -70,7 +68,6 @@ class DrawingApplication(tkinter.Frame):
         fileMenu.add_command(label="New", command=newWindow)
 
         def parse(data):
-            #print(data) 
             newWindow()
             self.graphicsCommands = PyList()
             graphicsCommands = data['GraphicsCommands']
@@ -369,7 +366,6 @@ class DrawingApplication(tkinter.Frame):
                 self.label2.grid(pady=10,padx=67)
                 self.label3=ttk.Label(self.ventana1, text="registrado dibujos",foreground="#FF0000",background="#222222",font=("Times new roman",18))
                 self.label3.grid(pady=10,padx=67)
-                #self.ventana1.mainloop()
 
         def loadDraw():
             r = self.combobox1.get().split(" ")
@@ -377,8 +373,6 @@ class DrawingApplication(tkinter.Frame):
             jsons = self.paint.searchPaint(id)
             b = json.loads(jsons)
             return parse(b)
-            #print(self.combobox1.get())
-            #self.label2.configure(text = self.combobox1.get())
 
         def deleteDraw():
             r = self.combobox1.get().split(" ")
@@ -386,8 +380,6 @@ class DrawingApplication(tkinter.Frame):
             jsons = self.paint.searchPaint(id)
             self.paint.dropePaint(id)
             self.ventana1.destroy
-            #run()
-            #self.ventana1.update
 
         #Ventana de guardado de dibujo
         def run2():
@@ -447,13 +439,12 @@ class DrawingApplication(tkinter.Frame):
             self.contenedor.configure(background="#222222")
             mostrarDatos()
             self.contenedor.grid()
-            #ventana.mainloop()
 
         def mostrarDatos():
             if(User(self.engine).searchAdmin(self.user, self.password)[0]):
-                datos = "SELECT DISTINCT Binnacle.dat_date, User.var_userName, Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id"
+                datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id"
             else: 
-                datos = "SELECT DISTINCT Binnacle.dat_date, User.var_userName, Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
+                datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor,, Binnacle.var_fillColor, FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
 
             dates = self.engine.select(datos)
             for values in dates:
