@@ -204,7 +204,7 @@ class DrawingApplication(tkinter.Frame):
             binnacle()
 
         fileMenu.add_command(label="Save",command=saveFile)
-        #fileMenu.add_command(label="Download",command=viewBinnacle)
+        #fileMenu.add_command(label="Download",command=download)
         fileMenu.add_command(label="Binnacle",command=viewBinnacle)
         fileMenu.add_command(label="Exit",command=self.master.quit)
         bar.add_cascade(label="File",menu=fileMenu)

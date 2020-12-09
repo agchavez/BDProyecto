@@ -339,30 +339,40 @@ CREATE PROCEDURE sp_searchPaintName(
 END$$
 
 DELIMITER ;
+
+
+DELIMITER $$
     -- Creacion de los trigger
-
-    DROP TRIGGER IF EXISTS InsertPaint;
-
     -- Tigger de insertar dibujo
+    DROP TRIGGER IF EXISTS InsertPaint;
     CREATE TRIGGER InsertPaint AFTER INSERT ON Paint
         FOR EACH ROW
+        BEGIN
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Insert", NEW.id_user, "","");
-
+    END $$
 
     DROP TRIGGER IF EXISTS DeletePaint;
     -- Tigger de eliminar dibujos
     CREATE TRIGGER DeletePaint AFTER DELETE ON Paint
         FOR EACH ROW
+        BEGIN
             INSERT INTO Binnacle(tex_action,id_user, var_fillColor, var_penColor) VALUES ("Delete", OLD.id_user, "","");
+            INSERT INTO BackupDB.Binnacle(tex_action,id_user, var_fillColor, var_penColor) VALUES ("Delete", OLD.id_user, "","");
+        
+    END $$
 
     DROP TRIGGER IF EXISTS UpdatePaint;
     -- Tigger de Actualizar dibujo
     CREATE TRIGGER UpdatePaint AFTER UPDATE ON Paint
         FOR EACH ROW
+        BEGIN
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
+            INSERT INTO BackupDB.Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
+        
+    END $$
 
+DELIMITER ;
 
 
 SET @admin = 0;
-
-CALL sp_addUser("admin","admin",0,'#FFFFFF','#222222', @admin);
+CALL sp_addUser("admin","admin",0,'#222222','#222222', @admin);

@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS User(
 
 CREATE TABLE IF NOT EXISTS Paint(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    blob_name BLOB NOT NULL COMMENT "Nombre del dibujo",
-    blob_data BLOB NOT NULL COMMENT "Información del dibujo ",
+    var_name BLOB NOT NULL COMMENT "Nombre del dibujo",
+    jso_data BLOB NOT NULL COMMENT "Información del dibujo ",
     id_user INT NOT NULL COMMENT "llave foranéa de la tabla de usuario",
     FOREIGN KEY (id_user) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE
 )COMMENT "Descripción de la tabla paint con sus respectivos campos";
@@ -53,14 +53,14 @@ DROP PROCEDURE IF EXISTS sp_addPaint;
 
 -- Agregar Dibujos
 CREATE PROCEDURE sp_addPaint(
-    IN paintName VARCHAR(20), IN blob_data BLOB, 
+    IN paintName VARCHAR(20), IN jso_data BLOB, 
     IN id_user INT, IN adminPassword VARCHAR(7),
     OUT result INT
 )
     BEGIN 
-        INSERT INTO Paint(blob_name, blob_data, id_user) VALUE (
+        INSERT INTO Paint(var_name, jso_data, id_user) VALUE (
             AES_ENCRYPT(paintName,adminPassword), 
-            AES_ENCRYPT(blob_data,adminPassword),
+            AES_ENCRYPT(jso_data,adminPassword),
             id_user
             );
         SET result = lAST_INSERT_ID();
@@ -70,7 +70,5 @@ DELIMITER ;
 CREATE TRIGGER InsertPaint AFTER INSERT ON Paint
         FOR EACH ROW
             INSERT INTO Binnacle(tex_action,id_user,tex_namePaint) VALUES ("Insert", 
-            NEW.id_user,CAST(AES_DECRYPT(NEW.blob_name,'admin')AS CHAR));
-
-SET @admin = 0;
-CALL sp_addUser("admin","admin",0,'#FFFFFF','#222222','admin', @admin);
+            NEW.id_user,CAST(AES_DECRYPT(NEW.var_name,'admin')AS CHAR));
+            

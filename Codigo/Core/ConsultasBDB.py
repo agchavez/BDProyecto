@@ -20,11 +20,11 @@ class paintBDB():
         
     def search(self,namePaint,idUser): #Solicitar los dibujos que pertencen al usuario
         self.paints = self.engie.select("""SELECT 
-                                        CAST(AES_DECRYPT(blob_data,'admin')AS CHAR) 
+                                        CAST(AES_DECRYPT(jso_data,'admin')AS CHAR) 
                                     FROM
                                         Paint
                                     WHERE 
-                                        id_user = %s AND CAST(AES_DECRYPT(blob_name ,'admin')AS CHAR) = '%s'
+                                        id_user = %s AND CAST(AES_DECRYPT(var_name ,'admin')AS CHAR) = '%s'
                                     ;""" % (idUser,namePaint))
         return self.paints
                                    
