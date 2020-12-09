@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Paint(
 CREATE TABLE IF NOT EXISTS Binnacle(
         id INT AUTO_INCREMENT PRIMARY KEY,
         dat_date TIMESTAMP DEFAULT NOW() ON UPDATE NOW() COMMENT "Fecha de los cambios",
-        tex_action ENUME('Login','Insert','Delete','Update','ColorConf') NOT NULL COMMENT "Acción que realiza el usuario ya sea operador o administrador",
+        tex_action ENUM('Insert') NOT NULL COMMENT "Acción que realiza el usuario ya sea operador o administrador",
         tex_namePaint VARCHAR(20) NOT NULL COMMENT "Nombre del dibujo creado",
         id_user INT NOT NULL COMMENT "Llave foranéa de la tabla de User",
         FOREIGN KEY (id_user) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -39,7 +39,7 @@ CREATE PROCEDURE sp_addUser(
 )
     BEGIN   
 
-        INSERT INTO User(blob_userName, blob_password, bit_type, blob_fillColor, blob_penColor ) VALUE (
+        INSERT INTO User(var_userName, var_password, bit_type, var_fillColor, var_penColor) VALUE (
             AES_ENCRYPT(serName,adminPassword), 
             AES_ENCRYPT(passwor,adminPassword), 
             typex, 
@@ -69,8 +69,8 @@ CREATE PROCEDURE sp_addPaint(
 DELIMITER ;
 CREATE TRIGGER InsertPaint AFTER INSERT ON Paint
         FOR EACH ROW
-            INSERT INTO Binnacle(tex_action,id_user,tex_namePaint) VALUES ("Insert", NEW.id_user,NEW.blob_name);
+            INSERT INTO Binnacle(tex_action,id_user,tex_namePaint) VALUES ("Insert", 
+            NEW.id_user,CAST(AES_DECRYPT(NEW.blob_name,'admin')AS CHAR));
 
-
-INSERT INTO User(var_userName, var_password, var_fillColor, var_penColor, bit_type) 
-VALUES ("admin","admin",'#FFFFFF','#222222',0); 
+SET @admin = 0;
+CALL sp_addUser("admin","admin",0,'#FFFFFF','#222222','admin', @admin);

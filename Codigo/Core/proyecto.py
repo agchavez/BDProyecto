@@ -46,9 +46,9 @@ class DrawingApplication(tkinter.Frame):
         self.master.title("Draw")
         bar = tkinter.Menu(self.master)
         fileMenu = tkinter.Menu(bar,tearoff=0)
-        config = configparser.ConfigParser() 
+        configbdb = configparser.ConfigParser() 
         configbdb.read('config.ini')
-        self.engiebdb =  MySQLEngine(config['DATABASERESPALDO'])
+        self.engiebdb =  MySQLEngine(configbdb['DATABASERESPALDO'])
 
         def ColorDefaul():
             query = ColorConf(self.engine).searchColor(self.idUser)
@@ -67,7 +67,6 @@ class DrawingApplication(tkinter.Frame):
             ColorDefaul()
             penColor.set(self.penColor)
             fillColor.set(self.fillColor)
-            downloadMenu(False)
             self.graphicsCommands = PyList()
             
 
@@ -184,6 +183,7 @@ class DrawingApplication(tkinter.Frame):
             json += ']}'
             json += "}"
             Paint(self.engine).updatePaint(json , id_Draw)
+            paintBDB(self.engiebdb).addPaint(self.namePaint, json , id)
             
         def saveFile():
             run2() 
@@ -194,7 +194,8 @@ class DrawingApplication(tkinter.Frame):
             if(paintdbd[0]):
                 filename = tkinter.filedialog.asksaveasfilename(title="Descargar dibujo...")
                 file = open(filename, "w")
-                file.write(paintdbd[1])
+                file.write(json.loads(paintdbd[1]))
+                downloadMenu(False)
 
             else:
                 print('ERROR con la base de datos B')
