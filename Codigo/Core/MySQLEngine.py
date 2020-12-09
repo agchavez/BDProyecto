@@ -26,14 +26,18 @@ class MySQLEngine:
     def select(self, query):
         self.link.execute(query)
         temp = self.link.fetchall()
-        self.link.close()
+        #self.link.close()
         return temp
     
     def management(self, sp, arg):
         temp = self.link.callproc(sp, arg)
         self.commit()
-        self.link.close()
+        #self.link.close()
         return temp
         
     def commit(self):
         self.con.commit()
+
+    #No se debe cerrar la coneccion en los select si no que despues de la consulta
+    def closeConnection(self):
+        self.link.close()

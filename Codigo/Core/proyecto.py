@@ -204,7 +204,7 @@ class DrawingApplication(tkinter.Frame):
             binnacle()
 
         fileMenu.add_command(label="Save",command=saveFile)
-        #fileMenu.add_command(label="Download",command=viewBinnacle)
+        #fileMenu.add_command(label="Download",command=download)
         fileMenu.add_command(label="Binnacle",command=viewBinnacle)
         fileMenu.add_command(label="Exit",command=self.master.quit)
         bar.add_cascade(label="File",menu=fileMenu)
@@ -503,6 +503,7 @@ class DrawingApplication(tkinter.Frame):
                 datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor, FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
 
             dates = self.engine.select(datos)
+            
             for values in dates:
                 date = values[0]
                 name = values[1]
