@@ -25,11 +25,14 @@ class MySQLEngine:
     
     def select(self, query):
         self.link.execute(query)
-        return self.link.fetchall()
+        temp = self.link.fetchall()
+        self.link.close()
+        return temp
     
     def management(self, sp, arg):
         temp = self.link.callproc(sp, arg)
         self.commit()
+        self.link.close()
         return temp
         
     def commit(self):
