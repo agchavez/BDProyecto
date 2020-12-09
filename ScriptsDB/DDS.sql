@@ -368,7 +368,6 @@ DELIMITER $$
         BEGIN
             INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
             INSERT INTO BackupDB.Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
-        
     END $$
 
 DELIMITER ;

@@ -503,6 +503,7 @@ class DrawingApplication(tkinter.Frame):
                 datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor, FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
 
             dates = self.engine.select(datos)
+            
             for values in dates:
                 date = values[0]
                 name = values[1]
