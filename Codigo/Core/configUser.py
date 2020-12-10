@@ -9,7 +9,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Style
 from tkinter import messagebox
-
+from Core.ConsultasBDB import *
 import tkinter
 import turtle
 import xml
