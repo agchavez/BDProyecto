@@ -307,29 +307,29 @@ END $$
 
 DROP PROCEDURE IF EXISTS sp_searchPaintName;
 CREATE PROCEDURE sp_searchPaintName(
-    IN id_User INT,
+    IN idUser INT,
     IN namePaint VARCHAR(20),
     OUT result BIT,
     OUT id_Paint INT
 )BEGIN
-    DECLARE id_U INT;
     DECLARE name_Paint VARCHAR(20);
     DECLARE finish INT DEFAULT 0;
     DECLARE id_P INT;
     DECLARE cursorPaint
             CURSOR FOR
-                SELECT CAST(AES_DECRYPT(var_name,'admin')AS CHAR), id, id_user FROM Paint;
+                SELECT CAST(AES_DECRYPT(var_name,'admin')AS CHAR), id FROM Paint WHERE id_user = idUser;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET finish = 1;
 
     OPEN cursorPaint;
         getPaint: LOOP
-            FETCH cursorPaint INTO name_Paint, id_P , id_U;
+            FETCH cursorPaint INTO name_Paint, id_P ;
             IF finish = 1 THEN
+                SET result = 0;
                 LEAVE getPaint;
             END IF;
 
-            IF (id_U = id_User AND name_Paint = namePaint) THEN
+            IF (name_Paint = namePaint) THEN
                 SET id_Paint = id_P;
                 SET result = 1;
                 LEAVE getPaint;
@@ -357,7 +357,6 @@ DELIMITER $$
         FOR EACH ROW
         BEGIN
             INSERT INTO Binnacle(tex_action,id_user, var_fillColor, var_penColor) VALUES ("Delete", OLD.id_user, "","");
-            INSERT INTO BackupDB.Binnacle(tex_action,id_user, var_fillColor, var_penColor) VALUES ("Delete", OLD.id_user, "","");
         
     END $$
 
@@ -366,8 +365,7 @@ DELIMITER $$
     CREATE TRIGGER UpdatePaint AFTER UPDATE ON Paint
         FOR EACH ROW
         BEGIN
-            INSERT INTO Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
-            INSERT INTO BackupDB.Binnacle(tex_action,id_user,var_fillColor, var_penColor) VALUES ("Update", NEW.id_user, "","");
+            INSERT INTO Binnacle(tex_action,id_user,var_fillColor,var_penColor) VALUES ("Update", OLD.id_user, "","");
     END $$
 
 DELIMITER ;

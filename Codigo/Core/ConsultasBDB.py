@@ -31,16 +31,7 @@ class paintBDB():
     def addPaint(self,namePaint,data,idUser,adminPass= 'admin'):
         compress_data = self.compress_data(data)
         temp = compress_data.hex()
-        query = self.engie.management('sp_addPaint',(namePaint,temp,idUser,'admin', None))
-        if query[4] > 0:
-            print('Dibujo ingresado con exito')
-            return True
-
-        else:
-            print('ERROR al guardar')
-            return False
-        print(temp)
-        
+        query = self.engie.management('sp_addPaint',(namePaint,temp,idUser,'admin'))
         
     def compress_data(self, data):
         json_data = json.dumps(data,indent=1)

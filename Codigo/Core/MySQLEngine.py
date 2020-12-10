@@ -3,7 +3,6 @@ import mysql.connector
 
 class MySQLEngine:
     def __init__(self, config = {}):
-        print(config['server'])
         self.server = config['server']
         self.port = config['port']
         self.user = config['user']
