@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+    @author: david.jacome@unah.hn
+"""
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Style
@@ -7,9 +11,11 @@ from tkinter import messagebox
 from Core.proyecto import *
 from Core.User import *
 from Core.MySQLEngine import *
-
 import configparser
 
+"""
+    clase de la ventana Login
+"""
 class LoginInit:
     def __init__(self):
         self.ventana = Tk()
@@ -26,7 +32,9 @@ class LoginInit:
         self.usuario = StringVar()
         self.password = StringVar()
         self.run()
-    
+    """
+        Método que se ejecuta en el constructor; crea las etiquetas y las cajas de texto.
+    """
     def run(self):
         Label(self.ventana, text = "   Usuario    =", fg=self.colorLetra, bg=self.colorFondo).place(x=250, y=150)
         Label(self.ventana, text = "Contraseña = ", fg=self.colorLetra, bg=self.colorFondo).place(x=250, y=225)
@@ -40,13 +48,21 @@ class LoginInit:
         self.ventana.title("Login")
         self.ventana.mainloop()
 
-
+    """
+        Retorna el el usuario que se ingresa en dicha caja de texto.
+    """
     def getUser(self):
         return self.usuario.get()
     
+    """
+        Retorna la contraseña que ingresa el usuario en dicha caja de texto.
+    """
     def getPassword(self):
         return self.password.get()
     
+    """
+        Envia la informacion de las cajas de texto hacia una consulta de DB para bucarl el usuario y si es correcta se ejecuta la ventana de dibujo.    
+    """
     def send(self):
         config = configparser.ConfigParser() 
         config.read('config.ini')

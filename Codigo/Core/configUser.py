@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 import tkinter.colorchooser
 import tkinter.filedialog
 from Core.configUser import *
+from Core.ConsultasBDB import UserBDB
 from Core.User import *
 import json
 import re
@@ -44,9 +45,10 @@ class ConfigUser:
 
         def save():
             a = User(engie)
+            b = UserBDB(engiebdb)
             if (getFillColor() != None and getPenColor() != None):
                 a.addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
-                UserBDB(engiebdb).addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
+                b.addUser(getUserName(), getPassword(), 1, getPenColor(), getFillColor())
                 messagebox.showinfo(message="Usuario registrado con éxito", title="SUCCESS")
             else:
                 messagebox.showwarning(message="Ingrese un hexadecimal en las casillas PenColor y FillColor", title="ERROR")

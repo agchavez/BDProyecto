@@ -142,7 +142,7 @@ class DrawingApplication(tkinter.Frame):
             screen.update()
 
         def configure():
-            config = ConfigUser().buildWindow(self.engine)
+            config = ConfigUser().buildWindow(self.engine, self.engiebdb)
 
         if (User(self.engine).searchAdmin(self.user, self.password)[0]):   
             fileMenu.add_command(label="Configure", command=configure)
