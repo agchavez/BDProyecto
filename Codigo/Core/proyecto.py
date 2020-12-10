@@ -142,7 +142,7 @@ class DrawingApplication(tkinter.Frame):
             screen.update()
 
         def configure():
-            config = ConfigUser().buildWindow(self.engine, self.engiebdb)
+            config = ConfigUser().buildWindow(self.engine,self.engiebdb)
 
         if (User(self.engine).searchAdmin(self.user, self.password)[0]):   
             fileMenu.add_command(label="Configure", command=configure)
@@ -202,11 +202,15 @@ class DrawingApplication(tkinter.Frame):
 
         def viewBinnacle():
             binnacle()
-
+        def exit():
+            print('adios')
+            self.engine.closeConnection()
+            self.engiebdb.closeConnection()
+            self.master.quit()
         fileMenu.add_command(label="Save",command=saveFile)
         #fileMenu.add_command(label="Download",command=download)
         fileMenu.add_command(label="Binnacle",command=viewBinnacle)
-        fileMenu.add_command(label="Exit",command=self.master.quit)
+        fileMenu.add_command(label="Exit",command=exit)
         bar.add_cascade(label="File",menu=fileMenu)
         self.master.config(menu=bar)
 
@@ -450,12 +454,13 @@ class DrawingApplication(tkinter.Frame):
         def check():
             namePaint = self.entry.get()
             result = Paint(self.engine).searchPaintName(namePaint, idUser=self.idUser)
-            #print(result)
+            print(result)
             #Si result es verdadero significa que encontro un dibujo con un nombre igual al que queremos asignar.
             #Por tanto le preguntara al usuario si quiere modificar el dibujo que ya estaba guardado o quiere guardar con un nuevo nombre.
-            if(result == False):
+            if(result[1] == False):
                save()
             else:
+                self.namePaint = self.entry.get()
                 self.id_P = result[1]
                 self.label2 = Label(self.ventana2, text="Nombre de dibujo ya registrado",fg="#FF0000",bg="#222222")
                 self.label2.grid(pady=20, padx=100)
@@ -500,7 +505,7 @@ class DrawingApplication(tkinter.Frame):
             if(User(self.engine).searchAdmin(self.user, self.password)[0]):
                 datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id"
             else: 
-                datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor, FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
+                datos = "SELECT DISTINCT Binnacle.dat_date, CAST(AES_DECRYPT(User.var_userName,'admin')AS CHAR), Binnacle.tex_action, Binnacle.var_penColor, Binnacle.var_fillColor FROM User JOIN Binnacle ON Binnacle.id_user = User.id WHERE User.id = %d;" %(self.idUser)
 
             dates = self.engine.select(datos)
             

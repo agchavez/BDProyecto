@@ -12,19 +12,19 @@
 class Paint():
     def __init__(self,engine):
         self.engine = engine
-        self.paints = [] 
+        self.paints = []
         
     """
         Solicita los dibujos que pertenecen al usuario
         @self.paints: modifica el arreglo del constructor ya con los dibujos que pertenecen al usuario
     """
-    def search(self, id = None):
+    def search(self, id = None): 
         self.paints = self.engine.select("""SELECT 
                                    id, CAST(AES_DECRYPT(var_name,'admin')AS CHAR)
                                    FROM Paint 
                                    WHERE id_user = %s""" % id)
         return self.paints
-    
+        
     """
         Retorna el json del dibujo si se encontró en la DB, si no retorna False
     """
@@ -35,7 +35,7 @@ class Paint():
         else:
             print('ERROR al obtener el dibujo')
             return False
-
+        
     """
         Retorna True, si el dibujo se ingresó correctamente en la DB
         @namePaint: nombre del dibujo
@@ -47,20 +47,17 @@ class Paint():
         if query[3] == 1:
             print('Dibujo ingresado con exito')
             return True
+
         else:
             print('ERROR al guardar')
-            return False
-
+            return 
+            
     """
        retorna los dibujos encontrados 
-    """ 
+    """    
     def showPaints(self):
         return self.paints
     
-    """
-        Retorna True, si el dibujo se eliminó correctamente de la DB
-        @id: id del dibujo
-    """
     def dropePaint(self, id):
         query = self.engine.management('sp_dropPaint',(id, None))
         if query[1] == 1:
@@ -75,13 +72,14 @@ class Paint():
     """
     def searchPaintName(self, namePaint, idUser):
         query = self.engine.management('sp_searchPaintName',(idUser,namePaint, None, None))
-        temp = [True,query[3]]
+        temp = (True,query[3])
         if query[2] == 1:
             return temp
         else:
-            return False 
+            return (False,0)
 
     def updatePaint(self,data,id):
+        print(id)
         query = self.engine.management('sp_updatePaint',(data,id, None))
         if query[2] == 1:
             print('Dibujo actualizado con exito')
