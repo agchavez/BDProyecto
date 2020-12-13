@@ -13,7 +13,6 @@ import configparser
 class LoginInit:
     def __init__(self):
         self.ventana = Tk()
-        self.ventana.iconbitmap(r'Codigo/iconoAPP.ico')
         self.colorFondo = "#222222"
         self.colorLetra = "#FFF"
         ancho_ventana = 750
