@@ -8,7 +8,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Style
-from tkinter import messagebox
+from tkinter import messagebox as mb
 from Core.ConsultasBDB import *
 import tkinter
 import turtle
@@ -57,11 +57,13 @@ class ConfigUser:
             a = User(engie)
             id =  a.loginUser(getUserName(),getPassword())
             a.dropUser(id)
+            messagebox.showinfo(message="Usuario eliminado con éxito", title="SUCCESS")
 
         def update():
             a = User(engie)
             id =  a.loginUser(getUserName(),getPassword())
             a.updateUser(getUserName(),getPassword(),1,getPenColor(), getFillColor(),id)
+             messagebox.showinfo(message="Usuario actualizado con éxito", title="SUCCESS")
 
         ventana = Tk()
         ventana.configure(background="#222222")

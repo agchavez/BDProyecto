@@ -3,11 +3,10 @@ from tkinter import ttk
 from tkinter.ttk import Style
 from tkinter import Tk
 import tkinter as tk
-from tkinter import messagebox
 from Core.proyecto import *
 from Core.User import *
 from Core.MySQLEngine import *
-
+from tkinter import messagebox as mb
 import configparser
 
 class LoginInit:
@@ -48,14 +47,17 @@ class LoginInit:
         return self.password.get()
     
     def send(self):
-        config = configparser.ConfigParser() 
-        config.read('config.ini')
-        engie =  MySQLEngine(config['DATABASE'])
+        if (self.getUser() ==""  or self.getPassword() == ""):
+            mb.showerror("ERROR","No puede dejar los cuadros de entrada vacíos")
+        else:
+            config = configparser.ConfigParser() 
+            config.read('config.ini')
+            engie =  MySQLEngine(config['DATABASE'])
 
-        temp = User(engie).searchUsers(self.getUser(),self.getPassword())
-        if (temp[0]):  
-            drawWindows = DrawingApplication().buildWindow(engie, self.getUser(),self.getPassword(),temp[1])
+            temp = User(engie).searchUsers(self.getUser(),self.getPassword())
+            if (temp[0]):  
+                drawWindows = DrawingApplication().buildWindow(engie, self.getUser(),self.getPassword(),temp[1])
 
-        self.ventana.quit
+            self.ventana.quit
 
 a = LoginInit()

@@ -17,7 +17,7 @@ from tkinter import Tk
 import tkinter as tk 
 from tkinter.ttk import Style
 from tkinter import ttk
-from tkinter import messagebox
+from tkinter import messagebox as mb
 import tkinter
 import turtle
 import xml
@@ -169,6 +169,7 @@ class DrawingApplication(tkinter.Frame):
             id = User(self.engine).loginUser(self.user,self.password)
             Paint(self.engine).addPaint(filename, json , id)
             paintBDB(self.engiebdb).addPaint(filename, json , id)
+            mb.showinfo("Informacion","Usuario agregado con exito")
 
         def updateDraw():
             return drawingJson(self.id_P)
@@ -184,6 +185,7 @@ class DrawingApplication(tkinter.Frame):
             json += "}"
             Paint(self.engine).updatePaint(json , id_Draw)
             paintBDB(self.engiebdb).addPaint(self.namePaint, json , id)
+            mb.showinfo("SUCCESS","Dibujo actualizado con exito")
             
         def saveFile():
             run2() 
@@ -196,6 +198,7 @@ class DrawingApplication(tkinter.Frame):
                 file = open(filename, "w")
                 file.write(json.loads(paintdbd[1]))
                 downloadMenu(False)
+                messagebox.showinfo(message="Dibujo descargado con exito", title="SUCCESS")
 
             else:
                 print('ERROR con la base de datos B')
@@ -452,20 +455,23 @@ class DrawingApplication(tkinter.Frame):
             self.boton1.grid(pady=5, padx=70)
 
         def check():
-            namePaint = self.entry.get()
-            result = Paint(self.engine).searchPaintName(namePaint, idUser=self.idUser)
-            print(result)
-            #Si result es verdadero significa que encontro un dibujo con un nombre igual al que queremos asignar.
-            #Por tanto le preguntara al usuario si quiere modificar el dibujo que ya estaba guardado o quiere guardar con un nuevo nombre.
-            if(result[1] == False):
-               save()
+            if(self.entry.get() == ""):
+                mb.showerror("Error","No puede dejar los cuadros de entrada vacíos")
             else:
-                self.namePaint = self.entry.get()
-                self.id_P = result[1]
-                self.label2 = Label(self.ventana2, text="Nombre de dibujo ya registrado",fg="#FF0000",bg="#222222")
-                self.label2.grid(pady=20, padx=100)
-                self.boton2 = tk.Button(self.ventana2, text="Actualizar dibujo", command = updateDraw,width=15)
-                self.boton2.grid(pady=5, padx=100)
+                namePaint = self.entry.get()
+                result = Paint(self.engine).searchPaintName(namePaint, idUser=self.idUser)
+                print(result)
+                #Si result es verdadero significa que encontro un dibujo con un nombre igual al que queremos asignar.
+                #Por tanto le preguntara al usuario si quiere modificar el dibujo que ya estaba guardado o quiere guardar con un nuevo nombre.
+                if(result[1] == False):
+                    save()
+                else:
+                    self.namePaint = self.entry.get()
+                    self.id_P = result[1]
+                    self.label2 = Label(self.ventana2, text="Nombre de dibujo ya registrado",fg="#FF0000",bg="#222222")
+                    self.label2.grid(pady=20, padx=100)
+                    self.boton2 = tk.Button(self.ventana2, text="Actualizar dibujo", command = updateDraw,width=15)
+                    self.boton2.grid(pady=5, padx=100)
 
         def save():
             return write(self.entry.get())
